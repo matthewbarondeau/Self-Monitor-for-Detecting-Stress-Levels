@@ -9,6 +9,7 @@
 #include "Drivers/UART0.h"
 #include "Drivers/LaunchPad.h"
 #include "msp.h"
+#include "adc.h"
 
 uint8_t LEDs;
 
@@ -38,9 +39,9 @@ int main(void){
     Clock_Init48MHz();
     UART0_Init();
     LaunchPad_Init();  // input from switches, output to LEDs on LaunchPad
+    ADC0_Ch6_Init();
     EnableInterrupts();
     UART0_OutString("\n\rApplication Processor - MSP432-CC2650\n\r");
-
     // Initialize Bluetooth
     r = AP_Init();
     AP_GetStatus();  // optional
@@ -69,18 +70,9 @@ int main(void){
     while(1){
         time++;
         AP_BackgroundProcess();  // handle incoming SNP frames
-        if(time>2000000){
-            time = 0;
-            Switch1 = LaunchPad_Input()&0x01;   // Button 1
-            if(AP_GetNotifyCCCD(0)){
-                OutValue("\n\rNotify Button 1=",Switch1);
-                AP_SendNotification(0);
-            }
-            Switch2 = (LaunchPad_Input()>>1)&0x01;   // Button 2
-            if(AP_GetNotifyCCCD(1)){
-                OutValue("\n\rNotify Button 2=",Switch2);
-                AP_SendNotification(1);
-            }
-        }
+        int data = ADC_Ch6_Samples(128);
+        UART0_OutString("ADC: ");
+        UART0_OutUDec(data);
+        UART0_OutString("\n\r");
     }
 }
