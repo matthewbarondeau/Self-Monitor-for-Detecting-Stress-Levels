@@ -9,8 +9,10 @@
 #include <stdint.h>
 #include "SysTick.h"
 
+
 extern int SysTick_Started;
 extern int Edge_Triggered_Capture;
+extern int Experimental_HeartBeat;
 
 void Edge_Trigger_Port1_Init(uint8_t bitmask){
     // Configured Port 1 as GPIO
@@ -65,15 +67,22 @@ void PORT1_IRQHandler(void){
     }
     */
 
-    // Reads P1.4
-    if(status == 0x0A){
-      P2->OUT ^= 0x04;                // toggle blue RGB LED
-      if(SysTick_Started == 1){
-          SysTick_Stop();
-          Edge_Triggered_Capture = 1;
-      } else {
-          SysTick_Restart();
-          SysTick_Started = 1;
-      }
+    if(status == 0xE){
+        #ifdef DEBUG
+        // Toggle blue RGB LED
+        P2->OUT ^= 0x04;
+        #endif
+
+        // Update every time we detect heartbeat
+        // Experimental_HeartBeat++;
+
+        // Calculate difference between edge interrupts
+        if(SysTick_Started == 1){
+            SysTick_Stop();
+            Edge_Triggered_Capture = 1;
+        } else {
+            SysTick_Restart();
+            SysTick_Started = 1;
+        }
     }
 }

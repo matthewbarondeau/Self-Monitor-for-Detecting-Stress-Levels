@@ -6,7 +6,6 @@
  */
 
 #include "msp.h"
-#include "adc.h"
 
 extern int number_SysTick_Interrupts;
 
