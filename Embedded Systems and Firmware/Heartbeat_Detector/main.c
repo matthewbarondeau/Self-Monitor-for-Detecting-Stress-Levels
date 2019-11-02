@@ -5,9 +5,11 @@
 #include "Drivers/UART0.h"
 #include "Drivers/SysTick.h"
 #include "Drivers/CortexM.h"
-#include "Drivers/PWM.h"
+#include "Drivers/AP.h"
+#include "Drivers/Timer32.h"
 
 #define DEBUG
+#define BLUETOOTH
 
 #define Cycles_Per_Second 48000000
 #define Cycles_Per_Systick 16777216
@@ -18,6 +20,24 @@ volatile int number_SysTick_Interrupts = 0;
 volatile int SysTick_Started = 0;
 volatile int Edge_Triggered_Capture = 0;
 volatile int Experimental_HeartBeat = 0;
+volatile int Timer_Interval = 0;
+int Heartbeat;
+
+uint8_t LEDs;
+
+void readHeartbeat(void){
+    // Print out Heartbeat information to UART0
+    #ifdef DEBUG
+    UART0_OutString("Bluetooth called\n\r");
+    UART0_OutString("Heartrate: ");
+    UART0_OutUDec(Experimental_HeartBeat);
+    UART0_OutString("\n\r");
+    #endif
+
+    // Copy volatile into to Variable that bluetooth tracks
+    Heartbeat = Experimental_HeartBeat;
+}
+
 
 void main(void){
 	Clock_Init48MHz();
@@ -25,20 +45,43 @@ void main(void){
     LaunchPad_Init();
     Edge_Trigger_Port1_Init(0x56);
 
+    // Initialize UART0
+    UART0_Init();
+
     // Initialize SysTick then turn it off
     SysTick_Init(0xFFFFFF);
     SysTick_Stop();
 
-    // Initialize Timer32 to interrupt once per second
-    //Timer32Init(Cycles_Per_Second);
+    #ifdef BLUETOOTH
 
-    PWM_Init1(6000, 3000);
+    // Initialize CC2650 Bluetooth
+    EnableInterrupts();
+    int r = AP_Init();
+    AP_GetStatus();
+    AP_GetVersion();
+    AP_AddService(0xFFF0);
 
-    // Initialize UART0
-    UART0_Init();
+    // Add Heartbeat read characteristic
+    AP_AddCharacteristic(
+        0xFFF1,                     // Unique ID Number
+        4,                          // Number of bytes to send
+        &Heartbeat,                 // Pointer to the user data
+        0x01,                       // Permission: 0=none, 1=Read, 2=Write, 3=Read+Write
+        0x02,                       // Properties: 2=Read, 8=Write, 0xA=Read+Write
+        "Heartbeat",                // Null-terminated string up to 20 bytes
+        &readHeartbeat,             // Read function called
+        0                           // Write function called
+    );
+
+    // Finish configuring Bluetooth and start advertising
+    AP_RegisterService();
+    AP_StartAdvertisement();
+    AP_GetStatus(); // optional
+
+    #endif
 
     while(1){
-        WaitForInterrupt();
+        AP_BackgroundProcess();
         if(Edge_Triggered_Capture){
 
             // Acknowledge Completion of Heartbeat
@@ -83,32 +126,17 @@ void main(void){
 
             // Calculate Instantaneous Heart Rate
             unsigned int interval = seconds * 10000 + seconds_fraction;
-            unsigned int heart_rate = Seconds_Per_Minute * 1000 / interval;
+            unsigned int heart_rate = Seconds_Per_Minute * 10000 / interval;
 
             #ifdef DEBUG
             UART0_OutString("Heart Rate: ");
             UART0_OutUDec(heart_rate);
             UART0_OutString("\n\r");
             #endif
+
+            Experimental_HeartBeat = heart_rate;
         }
 
     }
 
 }
-
-// 32-bit timer interrupt handler
-void T32_INT1_IRQHandler(void){
-
-    // Acknowledge
-    TIMER32_1->INTCLR |= BIT0;              // Clear Timer32 interrupt flag
-
-    #ifdef DEBUG
-    UART0_OutString("Experimental Heart Beat: ");
-    UART0_OutUDec(Experimental_HeartBeat);
-    UART0_OutString("\n\r");
-    #endif
-
-    Experimental_HeartBeat = 0;
-}
-
-

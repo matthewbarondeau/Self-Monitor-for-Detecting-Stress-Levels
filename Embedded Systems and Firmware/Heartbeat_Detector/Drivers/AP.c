@@ -68,13 +68,15 @@ policies, either expressed or implied, of the FreeBSD Project.
 // see GPIO.c file for hardware connections 
 
 #include <stdint.h>
-#include "CortexM.h"
-#include "UART0.h"
-#include "UART1.h"
-#include "AP.h"
-#include "Clock.h"
+#include "Drivers/CortexM.h"
+#include "Drivers/UART0.h"
+#include "Drivers/UART1.h"
+#include "Drivers/AP.h"
+#include "Drivers/Clock.h"
 #include "msp.h"
-#include "GPIO.h"
+#include "Drivers/GPIO.h"
+
+int i;
 
 
 #define RECVSIZE 128
@@ -382,7 +384,7 @@ int AP_SendMessage(uint8_t *pt){
   data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++;   // MSB length
   data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++;   // CMD0
   data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++;   // CMD1
-  for(int i=0;i<size;i++){
+  for(i=0;i<size;i++){
     data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++; // payload
   }
   UART1_OutChar(fcs);                                  // FCS
@@ -449,7 +451,7 @@ int AP_RecvMessage(uint8_t *pt, uint32_t max){
   count = 5;
   size = (msb<<8)+lsb;
 // get payload
-  for(int i=0;i<size;i++){
+  for(i=0;i<size;i++){
     data = UART1_InChar(); 
     fcs = fcs^data; 
     count++;

@@ -67,7 +67,7 @@ void PORT1_IRQHandler(void){
     }
     */
 
-    if(status == 0xE){
+    if(status == 0xA){
         #ifdef DEBUG
         // Toggle blue RGB LED
         P2->OUT ^= 0x04;
