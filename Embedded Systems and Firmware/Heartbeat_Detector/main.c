@@ -62,6 +62,7 @@ void main(void){
     AP_AddService(0xFFF0);
 
     // Add Heartbeat read characteristic
+    /*
     AP_AddCharacteristic(
         0xFFF1,                     // Unique ID Number
         4,                          // Number of bytes to send
@@ -72,18 +73,32 @@ void main(void){
         &readHeartbeat,             // Read function called
         0                           // Write function called
     );
+    */
 
     // Finish configuring Bluetooth and start advertising
+    AP_AddNotifyCharacteristic(0xFFF1, 1, &Heartbeat, "Heartbeat", &readHeartbeat);
+
     AP_RegisterService();
     AP_StartAdvertisement();
     AP_GetStatus(); // optional
 
+    int time = 0;
     #endif
 
     while(1){
         AP_BackgroundProcess();
-        if(Edge_Triggered_Capture){
+        time++;
 
+        if(time > 2000000){
+            time = 0;
+            Heartbeat = Experimental_HeartBeat;
+            if(AP_GetNotifyCCCD(0)){
+                AP_SendNotification(0);
+            }
+
+        }
+
+        if(Edge_Triggered_Capture){
             // Acknowledge Completion of Heartbeat
             Edge_Triggered_Capture = 0;
 
