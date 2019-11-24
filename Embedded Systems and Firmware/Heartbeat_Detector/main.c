@@ -59,7 +59,7 @@ void main(void){
     int r = AP_Init();
     AP_GetStatus();
     AP_GetVersion();
-    AP_AddService(0xFFF0);
+    AP_AddService(0x00FF);
 
     // Add Heartbeat read characteristic
     /*
