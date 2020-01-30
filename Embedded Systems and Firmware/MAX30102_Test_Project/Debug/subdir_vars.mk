@@ -9,6 +9,7 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
+../MAX30102.c \
 ../heartRate.c \
 ../main.c \
 ../spo2.c \
@@ -16,6 +17,7 @@ C_SRCS += \
 ../system_msp432p401r.c 
 
 C_DEPS += \
+./MAX30102.d \
 ./heartRate.d \
 ./main.d \
 ./spo2.d \
@@ -23,6 +25,7 @@ C_DEPS += \
 ./system_msp432p401r.d 
 
 OBJS += \
+./MAX30102.obj \
 ./heartRate.obj \
 ./main.obj \
 ./spo2.obj \
@@ -30,6 +33,7 @@ OBJS += \
 ./system_msp432p401r.obj 
 
 OBJS__QUOTED += \
+"MAX30102.obj" \
 "heartRate.obj" \
 "main.obj" \
 "spo2.obj" \
@@ -37,6 +41,7 @@ OBJS__QUOTED += \
 "system_msp432p401r.obj" 
 
 C_DEPS__QUOTED += \
+"MAX30102.d" \
 "heartRate.d" \
 "main.d" \
 "spo2.d" \
@@ -44,6 +49,7 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
+"../MAX30102.c" \
 "../heartRate.c" \
 "../main.c" \
 "../spo2.c" \
