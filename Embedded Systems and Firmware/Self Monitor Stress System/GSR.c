@@ -6,6 +6,7 @@
  */
 
 #include "msp.h"
+#include "Drivers/adc.h"
 #include <stdint.h>
 
 void GSR_Init(){
