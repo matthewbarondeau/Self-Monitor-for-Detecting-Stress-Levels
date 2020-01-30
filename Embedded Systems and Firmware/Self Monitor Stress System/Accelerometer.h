@@ -61,22 +61,6 @@ typedef enum
   MMA8451_DATARATE_MASK       = 0b111
 } mma8451_dataRate_t;
 
-uint8_t Accelerometer_Init(void);
 
-void writeRegister8(uint8_t reg, uint8_t value);
-
-uint8_t readRegister8(uint8_t reg);
-
-void Accelerometer_Read(void);
-
-uint8_t Accelerometer_Orientation(void);
-
-void Accelerometer_Set_Range(mma8451_range_t range);
-
-mma8451_range_t Accelerometer_getRange(void);
-
-void Accelerometer_Set_Data_Rate(mma8451_dataRate_t dataRate);
-
-mma8451_dataRate_t Accelerometer_Get_Data_Rate(void);
 
 #endif /* ACCELEROMETER_H_ */

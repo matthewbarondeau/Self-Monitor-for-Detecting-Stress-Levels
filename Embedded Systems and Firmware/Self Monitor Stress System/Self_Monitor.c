@@ -12,7 +12,6 @@
 #include "GMR.h"
 #include "GSR.h"
 #include "ROS.h"
-//#include "Accelerometer.h"
 
 #define DEBUG0  // UART0 Debugging
 
@@ -57,7 +56,6 @@ void main(void){
     GMR_Init();
     GSR_Init();
     ROS_Init();
-    Accelerometer_Init();
 
     // Initialize Bluetooth
     int r = AP_Init();
