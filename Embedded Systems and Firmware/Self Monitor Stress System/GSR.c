@@ -10,9 +10,15 @@
 #include <stdint.h>
 
 void GSR_Init(){
-
+    ADC0_Ch6_Init();
 }
 
 int8_t GSR_Read_Data(){
-    return 0;
+    int gsr_average;
+    gsr_average = ADC_Ch6_Samples(10);
+    return gsr_average;
 }
+
+
+
+
