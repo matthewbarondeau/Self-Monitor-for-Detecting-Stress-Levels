@@ -47,6 +47,8 @@ static const uint8_t MAX30105_REVISIONID =      0xFE;
 static const uint8_t MAX30105_PARTID =          0xFF;    // Should always be 0x15. Identical to MAX30102.
 
 // MAX30105 Commands
+
+/*
 // Interrupt configuration (pg 13, 14)
 static const uint8_t MAX30105_INT_A_FULL_MASK =     (uint8_t)~0b10000000;
 static const uint8_t MAX30105_INT_A_FULL_ENABLE =   0x80;
@@ -68,6 +70,7 @@ static const uint8_t MAX30105_INT_DIE_TEMP_RDY_MASK = (uint8_t)~0b00000010;
 static const uint8_t MAX30105_INT_DIE_TEMP_RDY_ENABLE = 0x02;
 static const uint8_t MAX30105_INT_DIE_TEMP_RDY_DISABLE = 0x00;
 
+*/
 static const uint8_t MAX30105_SAMPLEAVG_MASK =  (uint8_t)~0b11100000;
 static const uint8_t MAX30105_SAMPLEAVG_1 =     0x00;
 static const uint8_t MAX30105_SAMPLEAVG_2 =     0x20;
@@ -128,87 +131,174 @@ static const uint8_t SLOT_NONE =                0x00;
 static const uint8_t SLOT_RED_LED =             0x01;
 static const uint8_t SLOT_IR_LED =              0x02;
 static const uint8_t SLOT_GREEN_LED =           0x03;
-static const uint8_t SLOT_NONE_PILOT =          0x04;
-static const uint8_t SLOT_RED_PILOT =           0x05;
-static const uint8_t SLOT_IR_PILOT =            0x06;
-static const uint8_t SLOT_GREEN_PILOT =         0x07;
 
 static const uint8_t MAX_30105_EXPECTEDPARTID = 0x15;
 
+static uint8_t activeLEDs = 0;
 
-void MAX30102_Soft_Reset(void){
 
+void softReset(void){
+    bitMask(MAX30105_MODECONFIG, MAX30105_RESET_MASK, MAX30105_RESET);
+
+    // Poll for bit to clear, reset is then complete
+    // Timeout after 100ms
+    unsigned long startTime = 0;
+    while (startTime < 100)
+    {
+      uint8_t response = readRegister8(MAX30105_MODECONFIG);
+      if ((response & MAX30105_RESET) == 0) break; //We're done!
+      __delay_cycles(48000); //Let's not over burden the I2C bus
+      startTime++;
+    }
 }
 
-void MAX30102_Sampling(uint8_t sampleAverage){
-
+void setFIFOAverage(uint8_t sampleAverage){
+    bitMask(MAX30105_FIFOCONFIG, MAX30105_SAMPLEAVG_MASK, sampleAverage);
 }
 
-void MAX30102_FIFO_Interrupt(uint8_t interruptOn){
-
+void enableFIFORollover(void){
+    bitMask(MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_ENABLE);
 }
 
-void MAX30102_LED_Mode(uint8_t ledMode){
-
+void setLEDMode(uint8_t ledMode){
+    bitMask(MAX30105_MODECONFIG, MAX30105_MODE_MASK, ledMode);
 }
 
-void MAX30102_ADC_Resolution(int adcRange){
-
+void setADCRange(int adcRange){
+    bitMask(MAX30105_PARTICLECONFIG, MAX30105_ADCRANGE_MASK, adcRange);
 }
 
-void MAX30102_Sampling_Rate(uint8_t sampleRate){
-
+void setSampleRate(uint8_t sampleRate){
+    bitMask(MAX30105_PARTICLECONFIG, MAX30105_SAMPLERATE_MASK, sampleRate);
 }
 
-void MAX30102_Pulse_Width(int pulseWidth){
-
+void setPulseWidth(int pulseWidth){
+    bitMask(MAX30105_PARTICLECONFIG, MAX30105_PULSEWIDTH_MASK, pulseWidth);
 }
 
-void MAX30102_LED_Brightness(uint8_t ledBrightness){
-
+void setPulseAmplitudeRed(uint8_t amplitude){
+    writeRegister8(MAX30105_LED1_PULSEAMP, amplitude);
 }
 
-void MAX30102_LED_Slots(uint8_t ledMode){
-
+void setPulseAmplitudeIR(uint8_t amplitude){
+    writeRegister8(MAX30105_LED2_PULSEAMP, amplitude);
 }
 
-void MAX30102_Clear_FIFO(void){
-
+void setPulseAmplitudeGreen(uint8_t amplitude){
+    writeRegister8(MAX30105_LED3_PULSEAMP, amplitude);
 }
 
-void MAX30102_Setup(uint8_t ledBrightness, uint8_t sampleAverage, uint8_t ledMode,
+void setPulseAmplitudeProximity(uint8_t amplitude){
+    writeRegister8(MAX30105_LED_PROX_AMP, amplitude);
+}
+
+void enableSlot(uint8_t slotNumber, uint8_t device){
+    switch (slotNumber) {
+      case (1):
+        bitMask(MAX30105_MULTILEDCONFIG1, MAX30105_SLOT1_MASK, device);
+        break;
+      case (2):
+        bitMask(MAX30105_MULTILEDCONFIG1, MAX30105_SLOT2_MASK, device << 4);
+        break;
+      case (3):
+        bitMask(MAX30105_MULTILEDCONFIG2, MAX30105_SLOT3_MASK, device);
+        break;
+      case (4):
+        bitMask(MAX30105_MULTILEDCONFIG2, MAX30105_SLOT4_MASK, device << 4);
+        break;
+      default:
+        //Shouldn't be here!
+        break;
+    }
+}
+
+void clearFIFO(void){
+    writeRegister8(MAX30105_FIFOWRITEPTR, 0);
+    writeRegister8(MAX30105_FIFOOVERFLOW, 0);
+    writeRegister8(MAX30105_FIFOREADPTR, 0);
+}
+
+void MAX30102_Setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
                     uint8_t sampleRate, int pulseWidth, int adcRange){
 
-    // Reset all previous configuration data
-    MAX30102_Soft_Reset();
+    softReset(); //Reset all configuration, threshold, and data registers to POR values
 
-    // Set FIFO Averaging
-    MAX30102_Sampling(sampleAverage);
+    //FIFO Configuration
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    //The chip will average multiple samples of same type together if you wish
+    if (sampleAverage == 1) setFIFOAverage(MAX30105_SAMPLEAVG_1); //No averaging per FIFO record
+    else if (sampleAverage == 2) setFIFOAverage(MAX30105_SAMPLEAVG_2);
+    else if (sampleAverage == 4) setFIFOAverage(MAX30105_SAMPLEAVG_4);
+    else if (sampleAverage == 8) setFIFOAverage(MAX30105_SAMPLEAVG_8);
+    else if (sampleAverage == 16) setFIFOAverage(MAX30105_SAMPLEAVG_16);
+    else if (sampleAverage == 32) setFIFOAverage(MAX30105_SAMPLEAVG_32);
+    else setFIFOAverage(MAX30105_SAMPLEAVG_4);
 
-    // Set Interrupt Condition
-    // Optional
-    MAX30102_FIFO_Interrupt(2);
+    //setFIFOAlmostFull(2); //Set to 30 samples to trigger an 'Almost Full' interrupt
+    enableFIFORollover(); //Allow FIFO to wrap/roll over
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    // Set LED Mode
-    MAX30102_LED_Mode(ledMode);
+    //Mode Configuration
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    if (ledMode == 3) setLEDMode(MAX30105_MODE_MULTILED); //Watch all three LED channels
+    else if (ledMode == 2) setLEDMode(MAX30105_MODE_REDIRONLY); //Red and IR
+    else setLEDMode(MAX30105_MODE_REDONLY); //Red only
+    activeLEDs = ledMode; //Used to control how many bytes to read from FIFO buffer
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    // Set ADC Resolution
-    MAX30102_ADC_Resolution(adcRange);
+    //Particle Sensing Configuration
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    if(adcRange < 4096) setADCRange(MAX30105_ADCRANGE_2048); //7.81pA per LSB
+    else if(adcRange < 8192) setADCRange(MAX30105_ADCRANGE_4096); //15.63pA per LSB
+    else if(adcRange < 16384) setADCRange(MAX30105_ADCRANGE_8192); //31.25pA per LSB
+    else if(adcRange == 16384) setADCRange(MAX30105_ADCRANGE_16384); //62.5pA per LSB
+    else setADCRange(MAX30105_ADCRANGE_2048);
 
-    // Set Sampling Rate
-    MAX30102_Sampling_Rate(sampleRate);
+    if (sampleRate < 100) setSampleRate(MAX30105_SAMPLERATE_50); //Take 50 samples per second
+    else if (sampleRate < 200) setSampleRate(MAX30105_SAMPLERATE_100);
+    else if (sampleRate < 400) setSampleRate(MAX30105_SAMPLERATE_200);
+    else if (sampleRate < 800) setSampleRate(MAX30105_SAMPLERATE_400);
+    else if (sampleRate < 1000) setSampleRate(MAX30105_SAMPLERATE_800);
+    else if (sampleRate < 1600) setSampleRate(MAX30105_SAMPLERATE_1000);
+    else if (sampleRate < 3200) setSampleRate(MAX30105_SAMPLERATE_1600);
+    else if (sampleRate == 3200) setSampleRate(MAX30105_SAMPLERATE_3200);
+    else setSampleRate(MAX30105_SAMPLERATE_50);
 
-    // Set Pulse Width
-    MAX30102_Pulse_Width(pulseWidth);
+    //The longer the pulse width the longer range of detection you'll have
+    //At 69us and 0.4mA it's about 2 inches
+    //At 411us and 0.4mA it's about 6 inches
+    if (pulseWidth < 118) setPulseWidth(MAX30105_PULSEWIDTH_69); //Page 26, Gets us 15 bit resolution
+    else if (pulseWidth < 215) setPulseWidth(MAX30105_PULSEWIDTH_118); //16 bit resolution
+    else if (pulseWidth < 411) setPulseWidth(MAX30105_PULSEWIDTH_215); //17 bit resolution
+    else if (pulseWidth == 411) setPulseWidth(MAX30105_PULSEWIDTH_411); //18 bit resolution
+    else setPulseWidth(MAX30105_PULSEWIDTH_69);
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    // Set Brightness
-    MAX30102_LED_Brightness(ledBrightness);
+    //LED Pulse Amplitude Configuration
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    //Default is 0x1F which gets us 6.4mA
+    //powerLevel = 0x02, 0.4mA - Presence detection of ~4 inch
+    //powerLevel = 0x1F, 6.4mA - Presence detection of ~8 inch
+    //powerLevel = 0x7F, 25.4mA - Presence detection of ~8 inch
+    //powerLevel = 0xFF, 50.0mA - Presence detection of ~12 inch
 
-    // Enable Slots
-    MAX30102_LED_Slots(ledMode);
+    setPulseAmplitudeRed(powerLevel);
+    setPulseAmplitudeIR(powerLevel);
+    setPulseAmplitudeGreen(powerLevel);
+    setPulseAmplitudeProximity(powerLevel);
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    // Clear FIFO
-    MAX30102_Clear_FIFO();
+    //Multi-LED Mode Configuration, Enable the reading of the three LEDs
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    enableSlot(1, SLOT_RED_LED);
+    if (ledMode > 1) enableSlot(2, SLOT_IR_LED);
+    if (ledMode > 2) enableSlot(3, SLOT_GREEN_LED);
+    //enableSlot(1, SLOT_RED_PILOT);
+    //enableSlot(2, SLOT_IR_PILOT);
+    //enableSlot(3, SLOT_GREEN_PILOT);
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    clearFIFO(); //Reset the FIFO before we begin checking the sensor
 }
 
 int MAX30102_Init(void){
