@@ -1,5 +1,10 @@
-/* --COPYRIGHT--,BSD
- * Copyright (c) 2017, Texas Instruments Incorporated
+/*
+ * -------------------------------------------
+ *    MSP432 DriverLib - v3_10_00_09 
+ * -------------------------------------------
+ *
+ * --COPYRIGHT--,BSD,BSD
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,13 +57,13 @@ extern "C"
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "msp.h"
+#include <msp.h>
 #include "eusci.h"
 
 #define EUSCI_B_I2C_NO_AUTO_STOP                           EUSCI_B_CTLW1_ASTP_0
 #define EUSCI_B_I2C_SET_BYTECOUNT_THRESHOLD_FLAG           EUSCI_B_CTLW1_ASTP_1
 #define EUSCI_B_I2C_SEND_STOP_AUTOMATICALLY_ON_BYTECOUNT_THRESHOLD  \
-                                                           EUSCI_B_CTLW1_ASTP_2
+	                                                       EUSCI_B_CTLW1_ASTP_2
 
 #define EUSCI_B_I2C_SET_DATA_RATE_1MBPS                                 1000000
 #define EUSCI_B_I2C_SET_DATA_RATE_400KBPS                                400000
@@ -77,11 +82,6 @@ extern "C"
 
 #define EUSCI_B_I2C_TRANSMIT_MODE                              EUSCI_B_CTLW0_TR
 #define EUSCI_B_I2C_RECEIVE_MODE                                           0x00
-
-#define EUSCI_B_I2C_TIMEOUT_DISABLE                        EUSCI_B_CTLW1_CLTO_0
-#define EUSCI_B_I2C_TIMEOUT_28_MS                          EUSCI_B_CTLW1_CLTO_1
-#define EUSCI_B_I2C_TIMEOUT_31_MS                          EUSCI_B_CTLW1_CLTO_2
-#define EUSCI_B_I2C_TIMEOUT_34_MS                          EUSCI_B_CTLW1_CLTO_3
 
 #define EUSCI_B_I2C_NAK_INTERRUPT                             EUSCI_B_IE_NACKIE
 #define EUSCI_B_I2C_ARBITRATIONLOST_INTERRUPT                   EUSCI_B_IE_ALIE
@@ -194,7 +194,7 @@ extern void I2C_initMaster(uint32_t moduleInstance,
 //!  EUSCI_B0 can be used. "A" modules such as EUSCI_A0 do not support the
 //!  I2C mode.
 //!
-//! \param slaveAddress 7-bit or 10-bit slave address
+//! \param slaveAddress 7-bit or 10-bit slave address 
 //! \param slaveAddressOffset Own address Offset referred to- 'x' value of
 //!     UCBxI2COAx. Valid values are:
 //!                  - \b EUSCI_B_I2C_OWN_ADDRESS_OFFSET0,
@@ -318,34 +318,6 @@ extern void I2C_setSlaveAddress(uint32_t moduleInstance,
 //
 //*****************************************************************************
 extern void I2C_setMode(uint32_t moduleInstance, uint_fast8_t mode);
-
-//*****************************************************************************
-//
-//! Sets the timeout of the I2C device
-//!
-//! \param moduleInstance is the instance of the eUSCI B (I2C) module. Valid
-//! parameters vary from part to part, but can include:
-//!         - \b EUSCI_B0_BASE
-//!         - \b EUSCI_B1_BASE
-//!         - \b EUSCI_B2_BASE
-//!         - \b EUSCI_B3_BASE
-//!  <br>It is important to note that for eUSCI modules, only "B" modules such as
-//!  EUSCI_B0 can be used. "A" modules such as EUSCI_A0 do not support the
-//!  I2C mode.
-//!
-//! \param timeout indicates desired timeout
-//!     - \b EUSCI_B_I2C_TIMEOUT_DISABLE [Default value]
-//!     - \b EUSCI_B_I2C_TIMEOUT_28_MS
-//!     - \b EUSCI_B_I2C_TIMEOUT_31_MS
-//!     - \b EUSCI_B_I2C_TIMEOUT_34_MS
-//!
-//! Modified bits are \b UCSWRST of \b UCBxCTL0 and \b UCCLTO of \b UCBxCTL1
-//! registers
-//!
-//! \return None.
-//
-//*****************************************************************************
-extern void I2C_setTimeout(uint32_t moduleInstance, uint_fast16_t timeout);
 
 //*****************************************************************************
 //
@@ -652,10 +624,10 @@ extern bool I2C_masterSendMultiByteNextWithTimeout(uint32_t moduleInstance,
 //!
 //! Modified registers are \b UCBxTXBUF and \b UCBxCTL1.
 //!
-//! \return false if NAK occurred, false otherwise
+//! \return None.
 //
 //*****************************************************************************
-extern bool I2C_masterSendMultiByteFinish(uint32_t moduleInstance,
+extern void I2C_masterSendMultiByteFinish(uint32_t moduleInstance,
         uint8_t txData);
 
 //*****************************************************************************
@@ -1019,8 +991,7 @@ extern uint8_t I2C_masterIsStopSent(uint32_t moduleInstance);
 //! This function checks the status of the bus via UCTXSTT bit in
 //! UCBxCTL1 register.
 //!
-//! \return Returns EUSCI_B_I2C_BUS_BUSY if the I2C Master is busy; otherwise,
-//!         returns EUSCI_B_I2C_BUS_NOT_BUSY.
+//! \return Returns true if the START has been sent, false if it is sending
 //
 //*****************************************************************************
 extern bool I2C_masterIsStartSent(uint32_t moduleInstance);

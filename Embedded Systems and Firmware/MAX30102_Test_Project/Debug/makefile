@@ -11,7 +11,10 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./MAX30102.obj" \
+"./cpu.obj" \
 "./heartRate.obj" \
+"./i2c.obj" \
+"./interrupt.obj" \
 "./main.obj" \
 "./spo2.obj" \
 "./startup_msp432p401r_ccs.obj" \
@@ -159,8 +162,8 @@ MAX30102_Test_Project.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "MAX30102.obj" "heartRate.obj" "main.obj" "spo2.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
-	-$(RM) "MAX30102.d" "heartRate.d" "main.d" "spo2.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
+	-$(RM) "MAX30102.obj" "cpu.obj" "heartRate.obj" "i2c.obj" "interrupt.obj" "main.obj" "spo2.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
+	-$(RM) "MAX30102.d" "cpu.d" "heartRate.d" "i2c.d" "interrupt.d" "main.d" "spo2.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

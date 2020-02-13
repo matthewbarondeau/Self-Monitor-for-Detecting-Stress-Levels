@@ -10,7 +10,10 @@ CMD_SRCS += \
 
 C_SRCS += \
 ../MAX30102.c \
+../cpu.c \
 ../heartRate.c \
+../i2c.c \
+../interrupt.c \
 ../main.c \
 ../spo2.c \
 ../startup_msp432p401r_ccs.c \
@@ -18,7 +21,10 @@ C_SRCS += \
 
 C_DEPS += \
 ./MAX30102.d \
+./cpu.d \
 ./heartRate.d \
+./i2c.d \
+./interrupt.d \
 ./main.d \
 ./spo2.d \
 ./startup_msp432p401r_ccs.d \
@@ -26,7 +32,10 @@ C_DEPS += \
 
 OBJS += \
 ./MAX30102.obj \
+./cpu.obj \
 ./heartRate.obj \
+./i2c.obj \
+./interrupt.obj \
 ./main.obj \
 ./spo2.obj \
 ./startup_msp432p401r_ccs.obj \
@@ -34,7 +43,10 @@ OBJS += \
 
 OBJS__QUOTED += \
 "MAX30102.obj" \
+"cpu.obj" \
 "heartRate.obj" \
+"i2c.obj" \
+"interrupt.obj" \
 "main.obj" \
 "spo2.obj" \
 "startup_msp432p401r_ccs.obj" \
@@ -42,7 +54,10 @@ OBJS__QUOTED += \
 
 C_DEPS__QUOTED += \
 "MAX30102.d" \
+"cpu.d" \
 "heartRate.d" \
+"i2c.d" \
+"interrupt.d" \
 "main.d" \
 "spo2.d" \
 "startup_msp432p401r_ccs.d" \
@@ -50,7 +65,10 @@ C_DEPS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "../MAX30102.c" \
+"../cpu.c" \
 "../heartRate.c" \
+"../i2c.c" \
+"../interrupt.c" \
 "../main.c" \
 "../spo2.c" \
 "../startup_msp432p401r_ccs.c" \
