@@ -118,6 +118,13 @@ extern "C"
 //!          \link I2C_initMaster \endlink for parameter documentation.
 //
 //*****************************************************************************
+
+void writeRegister8(uint8_t reg, uint8_t value);
+
+uint8_t readRegister8(uint8_t reg);
+
+void bitMask(uint8_t reg, uint8_t mask, uint8_t thing);
+
 typedef struct
 {
     uint_fast8_t selectClockSource;

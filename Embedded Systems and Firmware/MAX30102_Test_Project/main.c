@@ -19,10 +19,14 @@ const eUSCI_I2C_MasterConfig i2cConfig =
         EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
 };
 
-void main(void)
-{
+void main(void){
 	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
 	I2C_initMaster(EUSCI_B0_BASE, &i2cConfig);
 	I2C_setSlaveAddress(EUSCI_B0_BASE, 0x57);
 	I2C_enableModule(EUSCI_B0_BASE);
+
+	MAX30102_Init();
+
+
+
 }
