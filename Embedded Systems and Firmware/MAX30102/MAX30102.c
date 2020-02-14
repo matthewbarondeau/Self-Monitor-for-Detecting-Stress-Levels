@@ -16,7 +16,7 @@
 #include <i2cMAX30102.h>
 #include <stdint.h>
 #include <stdbool.h>
-
+#include "MAX30102.h"
 #include "rom_map.h"
 
 // Status Registers
@@ -155,14 +155,6 @@ void softReset(void){
     }
 }
 
-void setFIFOAverage(uint8_t sampleAverage){
-    bitMask(MAX30105_FIFOCONFIG, MAX30105_SAMPLEAVG_MASK, sampleAverage);
-}
-
-void enableFIFORollover(void){
-    bitMask(MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_ENABLE);
-}
-
 void setLEDMode(uint8_t ledMode){
     bitMask(MAX30105_MODECONFIG, MAX30105_MODE_MASK, ledMode);
 }
@@ -221,11 +213,39 @@ void disableSlots(void){
     writeRegister8(MAX30105_MULTILEDCONFIG2, 0);
 }
 
+/*
+ * FIFO Configurations
+ */
+
+void setFIFOAverage(uint8_t sampleAverage){
+    bitMask(MAX30105_FIFOCONFIG, MAX30105_SAMPLEAVG_MASK, sampleAverage);
+}
+
 void clearFIFO(void){
     writeRegister8(MAX30105_FIFOWRITEPTR, 0);
     writeRegister8(MAX30105_FIFOOVERFLOW, 0);
     writeRegister8(MAX30105_FIFOREADPTR, 0);
 }
+
+void enableFIFORollover(void){
+    bitMask(MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_ENABLE);
+}
+
+void disableFIFORollover(void){
+    bitMask(MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_DISABLE);
+}
+
+uint8_t getWritePointer(void){
+    return (readRegister8(MAX30105_FIFOWRITEPTR));
+}
+
+uint8_t getReadPointer(void){
+    return (readRegister8(MAX30105_FIFOREADPTR));
+}
+
+/*
+ * Setup Routines
+ */
 
 void MAX30102_Setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
                     uint8_t sampleRate, int pulseWidth, int adcRange){
@@ -345,4 +365,10 @@ int MAX30102_Init(void){
     return 0;
 }
 
+/*
+ * Data Collection
+ */
 
+uint8_t MAX30102_available(void){
+    int8_t numberOfSamples = sense.head - sense.tail;
+}
