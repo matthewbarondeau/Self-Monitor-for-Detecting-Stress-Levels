@@ -201,7 +201,7 @@ int main(void)
     MAP_I2C_enableModule(EUSCI_B0_BASE);
 
     // Check Connection
-    uint8_t deviceid = readRegister8(MMA8451_REG_WHOAMI);
+    uint8_t deviceid = readRegister8(0xFF);
     if(deviceid != 0x1A){
         return false;
     }
