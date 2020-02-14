@@ -195,6 +195,7 @@ void setPulseAmplitudeProximity(uint8_t amplitude){
     writeRegister8(MAX30105_LED_PROX_AMP, amplitude);
 }
 
+
 void enableSlot(uint8_t slotNumber, uint8_t device){
     switch (slotNumber) {
       case (1):
@@ -215,15 +216,15 @@ void enableSlot(uint8_t slotNumber, uint8_t device){
     }
 }
 
+void disableSlots(void){
+    writeRegister8(MAX30105_MULTILEDCONFIG1, 0);
+    writeRegister8(MAX30105_MULTILEDCONFIG2, 0);
+}
+
 void clearFIFO(void){
     writeRegister8(MAX30105_FIFOWRITEPTR, 0);
     writeRegister8(MAX30105_FIFOOVERFLOW, 0);
     writeRegister8(MAX30105_FIFOREADPTR, 0);
-}
-
-void MAX30102_readPartID(void){
-    return readRegister8(MAX30105_REVISIONID);
-
 }
 
 void MAX30102_Setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
