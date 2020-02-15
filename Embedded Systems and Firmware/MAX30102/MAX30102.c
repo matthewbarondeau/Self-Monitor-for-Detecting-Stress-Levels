@@ -19,6 +19,8 @@
 #include "MAX30102.h"
 #include "rom_map.h"
 
+sense_struct sense;
+
 // Status Registers
 static const uint8_t MAX30105_INTSTAT1 =        0x00;
 static const uint8_t MAX30105_INTSTAT2 =        0x01;
@@ -56,24 +58,6 @@ static const uint8_t MAX30105_PARTID =          0xFF;    // Should always be 0x1
 
 // MAX30105 Commands
 
-/*
-// Interrupt configuration (pg 13, 14)
-static const uint8_t MAX30105_INT_A_FULL_MASK =     (uint8_t)~0b10000000;
-static const uint8_t MAX30105_INT_A_FULL_ENABLE =   0x80;
-static const uint8_t MAX30105_INT_A_FULL_DISABLE =  0x00;
-static const uint8_t MAX30105_INT_DATA_RDY_MASK = (uint8_t)~0b01000000;
-static const uint8_t MAX30105_INT_DATA_RDY_ENABLE = 0x40;
-static const uint8_t MAX30105_INT_DATA_RDY_DISABLE = 0x00;
-static const uint8_t MAX30105_INT_ALC_OVF_MASK = (uint8_t)~0b00100000;
-static const uint8_t MAX30105_INT_ALC_OVF_ENABLE =  0x20;
-static const uint8_t MAX30105_INT_ALC_OVF_DISABLE = 0x00;
-static const uint8_t MAX30105_INT_PROX_INT_MASK = (uint8_t)~0b00010000;
-static const uint8_t MAX30105_INT_PROX_INT_ENABLE = 0x10;
-static const uint8_t MAX30105_INT_PROX_INT_DISABLE = 0x00;
-static const uint8_t MAX30105_INT_DIE_TEMP_RDY_MASK = (uint8_t)~0b00000010;
-static const uint8_t MAX30105_INT_DIE_TEMP_RDY_ENABLE = 0x02;
-static const uint8_t MAX30105_INT_DIE_TEMP_RDY_DISABLE = 0x00;
-*/
 static const uint8_t MAX30105_SAMPLEAVG_MASK =  (uint8_t)~0b11100000;
 static const uint8_t MAX30105_SAMPLEAVG_1 =     0x00;
 static const uint8_t MAX30105_SAMPLEAVG_2 =     0x20;
@@ -186,7 +170,6 @@ void setPulseAmplitudeGreen(uint8_t amplitude){
 void setPulseAmplitudeProximity(uint8_t amplitude){
     writeRegister8(MAX30105_LED_PROX_AMP, amplitude);
 }
-
 
 void enableSlot(uint8_t slotNumber, uint8_t device){
     switch (slotNumber) {
@@ -371,4 +354,59 @@ int MAX30102_Init(void){
 
 uint8_t MAX30102_available(void){
     int8_t numberOfSamples = sense.head - sense.tail;
+    if(numberOfSamples < 0){
+        numberOfSamples += STORAGE_SIZE;
+    }
+    return(numberOfSamples);
+}
+
+uint32_t MAX30102_getRed(void){
+    if(MAX30102_safeCheck(250)){
+        return(sense.red[sense.head]);
+    } else{
+        return 0;
+    }
+}
+
+uint32_t MAX30102_getIR(void){
+    if(MAX30102_safeCheck(250)){
+        return sense.IR[sense.head];
+    } else{
+        return 0;
+    }
+}
+
+uint32_t MAX30102_getGreen(void){
+    if(MAX30102_safeCheck(250)){
+        return sense.green[sense.head];
+    } else{
+        return 0;
+    }
+}
+
+uint32_t MAX30102_getFIFORed(void){
+    return sense.red[sense.tail];
+}
+
+uint32_t MAX30102_getFIFOIR(void){
+    return sense.IR[sense.tail];
+}
+
+uint32_t MAX30102_getFIFOGreen(void){
+    return sense.green[sense.tail];
+}
+
+void MAX30102_nextSample(void){
+    if(MAX30102_available()){
+        sense.tail++;
+        sense.tail %= STORAGE_SIZE;
+    }
+}
+
+uint16_t MAX30102_check(void){
+
+}
+
+bool MAX30102_safeCheck(uint8_t maxTimeToCheck){
+
 }

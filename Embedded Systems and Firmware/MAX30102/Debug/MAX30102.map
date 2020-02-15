@@ -1,17 +1,17 @@
 ******************************************************************************
                   TI ARM Linker PC v18.12.4                    
 ******************************************************************************
->> Linked Fri Feb 14 17:49:30 2020
+>> Linked Fri Feb 14 18:11:32 2020
 
 OUTPUT FILE NAME:   <MAX30102.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00000b81
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00000c49
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  MAIN                  00000000   00040000  00000c66  0003f39a  R  X
+  MAIN                  00000000   00040000  00000d2e  0003f2d2  R  X
   INFO                  00200000   00004000  00000000  00004000  R  X
   SRAM_CODE             01000000   00010000  00000000  00010000  RW X
   SRAM_DATA             20000000   00010000  0000023d  0000fdc3  RW  
@@ -21,11 +21,11 @@ SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    00000c68   00000c68    r-x
+00000000    00000000    00000d30   00000d30    r-x
   00000000    00000000    00000140   00000140    r-- .intvecs
-  00000140    00000140    00000ae2   00000ae2    r-x .text
-  00000c24    00000c24    00000014   00000014    r-- .const
-  00000c38    00000c38    00000030   00000030    r-- .cinit
+  00000140    00000140    00000baa   00000baa    r-x .text
+  00000cec    00000cec    00000014   00000014    r-- .const
+  00000d00    00000d00    00000030   00000030    r-- .cinit
 20000000    20000000    0000003d   00000000    rw-
   20000000    20000000    00000038   00000000    rw- .bss
   20000038    20000038    00000005   00000000    rw- .data
@@ -41,33 +41,33 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    00000140     
                   00000000    00000140     startup_msp432p401r_ccs.obj (.intvecs:retain)
 
-.text      0    00000140    00000ae2     
-                  00000140    00000438     MAX30102.obj (.text)
-                  00000578    00000328     system_msp432p401r.obj (.text)
-                  000008a0    00000104     i2cMAX30102.obj (.text)
-                  000009a4    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
-                  00000a40    00000094     i2c_master_rw_repeated_start-master_code.obj (.text)
-                  00000ad4    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  00000b3c    00000044                                   : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
-                  00000b80    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
-                  00000bb4    0000001c                                   : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
-                  00000bd0    00000018     msp432p4xx_driverlib.lib : i2c.o (.text:I2C_masterIsStartSent)
-                  00000be8    00000012     startup_msp432p401r_ccs.obj (.text)
-                  00000bfa    00000002     --HOLE-- [fill = 0]
-                  00000bfc    00000010     msp432p4xx_driverlib.lib : i2c.o (.text:I2C_masterIsStopSent)
-                  00000c0c    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
-                  00000c1a    00000004                                   : pre_init.c.obj (.text:_system_pre_init)
-                  00000c1e    00000004                                   : exit.c.obj (.text:abort:abort)
+.text      0    00000140    00000baa     
+                  00000140    00000500     MAX30102.obj (.text)
+                  00000640    00000328     system_msp432p401r.obj (.text)
+                  00000968    00000104     i2cMAX30102.obj (.text)
+                  00000a6c    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
+                  00000b08    00000094     i2c_master_rw_repeated_start-master_code.obj (.text)
+                  00000b9c    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
+                  00000c04    00000044                                   : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  00000c48    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
+                  00000c7c    0000001c                                   : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
+                  00000c98    00000018     msp432p4xx_driverlib.lib : i2c.o (.text:I2C_masterIsStartSent)
+                  00000cb0    00000012     startup_msp432p401r_ccs.obj (.text)
+                  00000cc2    00000002     --HOLE-- [fill = 0]
+                  00000cc4    00000010     msp432p4xx_driverlib.lib : i2c.o (.text:I2C_masterIsStopSent)
+                  00000cd4    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  00000ce2    00000004                                   : pre_init.c.obj (.text:_system_pre_init)
+                  00000ce6    00000004                                   : exit.c.obj (.text:abort:abort)
 
-.const     0    00000c24    00000014     
-                  00000c24    00000014     i2c_master_rw_repeated_start-master_code.obj (.const:i2cConfig)
+.const     0    00000cec    00000014     
+                  00000cec    00000014     i2c_master_rw_repeated_start-master_code.obj (.const:i2cConfig)
 
-.cinit     0    00000c38    00000030     
-                  00000c38    0000000c     (__TI_handler_table)
-                  00000c44    00000009     (.cinit..data.load) [load image, compression = lzss]
-                  00000c4d    00000003     --HOLE-- [fill = 0]
-                  00000c50    00000008     (.cinit..bss.load) [load image, compression = zero_init]
-                  00000c58    00000010     (__TI_cinit_table)
+.cinit     0    00000d00    00000030     
+                  00000d00    0000000c     (__TI_handler_table)
+                  00000d0c    00000009     (.cinit..data.load) [load image, compression = lzss]
+                  00000d15    00000003     --HOLE-- [fill = 0]
+                  00000d18    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00000d20    00000010     (__TI_cinit_table)
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
@@ -89,13 +89,13 @@ MODULE SUMMARY
        Module                                         code   ro data   rw data
        ------                                         ----   -------   -------
     .\
-       MAX30102.obj                                   1080   0         53     
+       MAX30102.obj                                   1280   0         53     
        system_msp432p401r.obj                         808    0         4      
        startup_msp432p401r_ccs.obj                    18     320       0      
        i2cMAX30102.obj                                260    0         4      
        i2c_master_rw_repeated_start-master_code.obj   148    20        0      
     +--+----------------------------------------------+------+---------+---------+
-       Total:                                         2314   340       61     
+       Total:                                         2514   340       61     
                                                                               
     C:/Users/Matthew Barondeau/Downloads/msp432_driverlib_3_21_00_05/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
        i2c.o                                          40     0         0      
@@ -117,19 +117,19 @@ MODULE SUMMARY
        Stack:                                         0      0         512    
        Linker Generated:                              0      45        0      
     +--+----------------------------------------------+------+---------+---------+
-       Grand Total:                                   2784   385       573    
+       Grand Total:                                   2984   385       573    
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 00000c58 records: 2, size/record: 8, table size: 16
-	.data: load addr=00000c44, load size=00000009 bytes, run addr=20000038, run size=00000005 bytes, compression=lzss
-	.bss: load addr=00000c50, load size=00000008 bytes, run addr=20000000, run size=00000038 bytes, compression=zero_init
+__TI_cinit_table @ 00000d20 records: 2, size/record: 8, table size: 16
+	.data: load addr=00000d0c, load size=00000009 bytes, run addr=20000038, run size=00000005 bytes, compression=lzss
+	.bss: load addr=00000d18, load size=00000008 bytes, run addr=20000000, run size=00000038 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 00000c38 records: 3, size/record: 4, table size: 12
+__TI_handler_table @ 00000d00 records: 3, size/record: 4, table size: 12
 	index: 0, handler: __TI_decompress_lzss
 	index: 1, handler: __TI_decompress_none
 	index: 2, handler: __TI_zero_init
@@ -139,43 +139,52 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                          
 -------   ----                          
-00000c1f  C$$EXIT                       
-00000bd1  I2C_masterIsStartSent         
-00000bfd  I2C_masterIsStopSent          
+00000ce7  C$$EXIT                       
+00000c99  I2C_masterIsStartSent         
+00000cc5  I2C_masterIsStopSent          
 0000050b  MAX30102_Init                 
 000002f1  MAX30102_Setup                
 00000557  MAX30102_available            
+00000619  MAX30102_check                
+000005e9  MAX30102_getFIFOGreen         
+000005dd  MAX30102_getFIFOIR            
+000005d1  MAX30102_getFIFORed           
+000005b7  MAX30102_getGreen             
+0000059d  MAX30102_getIR                
+00000583  MAX30102_getRed               
+000005f5  MAX30102_nextSample           
+0000061b  MAX30102_safeCheck            
 20000038  SystemCoreClock               
-00000579  SystemCoreClockUpdate         
-000007ed  SystemInit                    
+00000641  SystemCoreClockUpdate         
+000008b5  SystemInit                    
 4000480c  WDTCTL_SYM                    
 20010000  __STACK_END                   
 00000200  __STACK_SIZE                  
-00000c58  __TI_CINIT_Base               
-00000c68  __TI_CINIT_Limit              
-00000c38  __TI_Handler_Table_Base       
-00000c44  __TI_Handler_Table_Limit      
-00000b3d  __TI_auto_init_nobinit_nopinit
-00000ad5  __TI_decompress_lzss          
-00000c0d  __TI_decompress_none          
+00000d20  __TI_CINIT_Base               
+00000d30  __TI_CINIT_Limit              
+00000d00  __TI_Handler_Table_Base       
+00000d0c  __TI_Handler_Table_Limit      
+00000c05  __TI_auto_init_nobinit_nopinit
+00000b9d  __TI_decompress_lzss          
+00000cd5  __TI_decompress_none          
 ffffffff  __TI_pprof_out_hndl           
 ffffffff  __TI_prof_data_size           
 ffffffff  __TI_prof_data_start          
 00000000  __TI_static_base__            
-00000bb5  __TI_zero_init_nomemset       
-000009a5  __aeabi_memcpy                
-000009a5  __aeabi_memcpy4               
-000009a5  __aeabi_memcpy8               
+00000c7d  __TI_zero_init_nomemset       
+00000a6d  __aeabi_memcpy                
+00000a6d  __aeabi_memcpy4               
+00000a6d  __aeabi_memcpy8               
 ffffffff  __binit__                     
 ffffffff  __c_args__                    
 UNDEFED   __mpu_init                    
 2000fe00  __stack                       
-00000b81  _c_int00_noargs               
+00000c49  _c_int00_noargs               
 UNDEFED   _system_post_cinit            
-00000c1b  _system_pre_init              
-00000c1f  abort                         
+00000ce3  _system_pre_init              
+00000ce7  abort                         
 ffffffff  binit                         
-00000955  bitMask                       
+00000a1d  bitMask                       
 000002a5  clearFIFO                     
 000002cf  disableFIFORollover           
 0000027d  disableSlots                  
@@ -183,11 +192,11 @@ ffffffff  binit
 00000219  enableSlot                    
 000002e7  getReadPointer                
 000002dd  getWritePointer               
-00000c24  i2cConfig                     
+00000cec  i2cConfig                     
 00000000  interruptVectors              
-00000a41  main                          
-000009a5  memcpy                        
-000008f9  readRegister8                 
+00000b09  main                          
+00000a6d  memcpy                        
+000009c1  readRegister8                 
 20000000  sense                         
 00000199  setADCRange                   
 00000291  setFIFOAverage                
@@ -199,7 +208,7 @@ ffffffff  binit
 000001bf  setPulseWidth                 
 000001ab  setSampleRate                 
 00000141  softReset                     
-000008a1  writeRegister8                
+00000969  writeRegister8                
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -229,31 +238,40 @@ address   name
 000002f1  MAX30102_Setup                
 0000050b  MAX30102_Init                 
 00000557  MAX30102_available            
-00000579  SystemCoreClockUpdate         
-000007ed  SystemInit                    
-000008a1  writeRegister8                
-000008f9  readRegister8                 
-00000955  bitMask                       
-000009a5  __aeabi_memcpy                
-000009a5  __aeabi_memcpy4               
-000009a5  __aeabi_memcpy8               
-000009a5  memcpy                        
-00000a41  main                          
-00000ad5  __TI_decompress_lzss          
-00000b3d  __TI_auto_init_nobinit_nopinit
-00000b81  _c_int00_noargs               
-00000bb5  __TI_zero_init_nomemset       
-00000bd1  I2C_masterIsStartSent         
-00000bfd  I2C_masterIsStopSent          
-00000c0d  __TI_decompress_none          
-00000c1b  _system_pre_init              
-00000c1f  C$$EXIT                       
-00000c1f  abort                         
-00000c24  i2cConfig                     
-00000c38  __TI_Handler_Table_Base       
-00000c44  __TI_Handler_Table_Limit      
-00000c58  __TI_CINIT_Base               
-00000c68  __TI_CINIT_Limit              
+00000583  MAX30102_getRed               
+0000059d  MAX30102_getIR                
+000005b7  MAX30102_getGreen             
+000005d1  MAX30102_getFIFORed           
+000005dd  MAX30102_getFIFOIR            
+000005e9  MAX30102_getFIFOGreen         
+000005f5  MAX30102_nextSample           
+00000619  MAX30102_check                
+0000061b  MAX30102_safeCheck            
+00000641  SystemCoreClockUpdate         
+000008b5  SystemInit                    
+00000969  writeRegister8                
+000009c1  readRegister8                 
+00000a1d  bitMask                       
+00000a6d  __aeabi_memcpy                
+00000a6d  __aeabi_memcpy4               
+00000a6d  __aeabi_memcpy8               
+00000a6d  memcpy                        
+00000b09  main                          
+00000b9d  __TI_decompress_lzss          
+00000c05  __TI_auto_init_nobinit_nopinit
+00000c49  _c_int00_noargs               
+00000c7d  __TI_zero_init_nomemset       
+00000c99  I2C_masterIsStartSent         
+00000cc5  I2C_masterIsStopSent          
+00000cd5  __TI_decompress_none          
+00000ce3  _system_pre_init              
+00000ce7  C$$EXIT                       
+00000ce7  abort                         
+00000cec  i2cConfig                     
+00000d00  __TI_Handler_Table_Base       
+00000d0c  __TI_Handler_Table_Limit      
+00000d20  __TI_CINIT_Base               
+00000d30  __TI_CINIT_Limit              
 20000000  sense                         
 20000038  SystemCoreClock               
 2000fe00  __stack                       
@@ -268,4 +286,4 @@ ffffffff  binit
 UNDEFED   __mpu_init                    
 UNDEFED   _system_post_cinit            
 
-[61 symbols]
+[70 symbols]
