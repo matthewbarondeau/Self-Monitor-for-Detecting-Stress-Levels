@@ -1,6 +1,7 @@
 
 /* DriverLib Defines */
 #include "driverlib.h"
+#include "Clock.h"
 
 /* Standard Defines */
 #include <stdint.h>
@@ -28,7 +29,7 @@ const eUSCI_I2C_MasterConfig i2cConfig =
 int main(void)
 {
     volatile uint32_t ii;
-
+    //Clock_Init48MHz();
     /* Disabling the Watchdog  */
     MAP_WDT_A_holdTimer();
 
@@ -61,7 +62,11 @@ int main(void)
 
     setPulseAmplitudeRed(0x0A);
 
-    while(1){};
+    while(1){
+        long irValue = MAX30102_getIR();
+        long values = MAX30102_available();
+        values += 0;
+    };
 
 }
 

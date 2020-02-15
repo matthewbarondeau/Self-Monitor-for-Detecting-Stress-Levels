@@ -5,19 +5,12 @@
  *      Author: Matthew Barondeau
  */
 
-
-/*
- * MAX30102.c
- *
- *  Created on: Jan 29, 2020
- *      Author: Matthew Barondeau
- */
-
 #include <i2cMAX30102.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "MAX30102.h"
 #include "rom_map.h"
+#include "driverlib.h"
 
 sense_struct sense;
 
@@ -320,7 +313,7 @@ int MAX30102_Init(void){
     // LED Brightness
     // Between 0 and 255
     // 0 the LED is off, 255 it draws 50mA
-    uint8_t ledBrightness = 60;
+    uint8_t ledBrightness = 255;
 
     // sampleAveraging
     // Options of 1, 2, 4, 8, 16, and 32
@@ -341,7 +334,7 @@ int MAX30102_Init(void){
 
     // ADC Range
     // Options of 2048, 4096, 8192, 16384
-    int adcRange = 16382;
+    int adcRange = 16384;
 
     MAX30102_Setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
 
@@ -360,30 +353,13 @@ uint8_t MAX30102_available(void){
     return(numberOfSamples);
 }
 
-uint32_t MAX30102_getRed(void){
-    if(MAX30102_safeCheck(250)){
-        return(sense.red[sense.head]);
-    } else{
-        return 0;
-    }
-}
-
 uint32_t MAX30102_getIR(void){
-    if(MAX30102_safeCheck(250)){
+    if(MAX30102_check()){
         return sense.IR[sense.head];
     } else{
         return 0;
     }
 }
-
-uint32_t MAX30102_getGreen(void){
-    if(MAX30102_safeCheck(250)){
-        return sense.green[sense.head];
-    } else{
-        return 0;
-    }
-}
-
 uint32_t MAX30102_getFIFORed(void){
     return sense.red[sense.tail];
 }
@@ -404,9 +380,91 @@ void MAX30102_nextSample(void){
 }
 
 uint16_t MAX30102_check(void){
+    uint8_t readPointer = getReadPointer();
+    uint8_t writePointer = getWritePointer();
 
+    int numberOfSamples = 0;
+
+    if(readPointer != writePointer){
+        numberOfSamples = writePointer - readPointer;
+        if(numberOfSamples < 0 ){
+            numberOfSamples += 32;
+        }
+
+        int bytesLeftToRead = numberOfSamples * activeLEDs * 3;
+
+        // Begin transmission
+        MAP_I2C_masterSendSingleByte(EUSCI_B0_BASE, MAX30105_FIFODATA);
+
+
+        while(bytesLeftToRead > 0){
+            int toGet = bytesLeftToRead;
+            if(toGet > 64){
+                toGet = 64 - (64 % (activeLEDs * 3));
+            }
+
+            bytesLeftToRead -= toGet;
+
+            //Start Request
+            //MAP_I2C_masterReceiveStart(EUSCI_B0_BASE);
+
+            while(toGet > 0){
+                sense.head++;
+                sense.head %= STORAGE_SIZE;
+
+                uint8_t temp[sizeof(uint32_t)];
+                uint32_t tempLong;
+
+                temp[3] = 0;
+                temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+                temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+                temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+
+                memcpy(&tempLong, temp, sizeof(tempLong));
+
+                tempLong &= 0x3FFFF;
+
+                sense.red[sense.head] = tempLong;
+
+                if(activeLEDs > 1){
+                    temp[3] = 0;
+                    temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+                    temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+                    if(toGet == -1){
+                        temp[0] = MAP_I2C_masterReceiveMultiByteFinish(EUSCI_B0_BASE);
+                    } else{
+                        temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+                    }
+
+                    memcpy(&tempLong, temp, sizeof(tempLong));
+
+                    tempLong &= 0x3FFFF;
+
+                    sense.IR[sense.head] = tempLong;
+                }
+
+                if (activeLEDs > 2){
+                    temp[3] = 0;
+                    temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+                    temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+                    temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
+
+                    memcpy(&tempLong, temp, sizeof(tempLong));
+
+                    tempLong &= 0x3FFFF; //Zero out all but 18 bits
+
+                    sense.green[sense.head] = tempLong;
+                }
+
+                toGet -= activeLEDs * 3;
+
+            }
+        }
+    }
+    //MAP_I2C_masterReceiveMultiByteStop(EUSCI_B0_BASE);
+    //while (I2C_masterIsStopSent(EUSCI_B0_BASE));
+    //while(!(EUSCI_B0->IFG & EUSCI_B_IFG_RXIFG0));
+    //MAP_I2C_masterReceiveMultiByteFinish(EUSCI_B0_BASE);
+    return(numberOfSamples);
 }
 
-bool MAX30102_safeCheck(uint8_t maxTimeToCheck){
-
-}
