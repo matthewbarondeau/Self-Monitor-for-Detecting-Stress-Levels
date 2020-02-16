@@ -35,6 +35,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
 #include <stdint.h>
+#include "Timer32.h"
 
 /* Forward declaration of the default fault handlers. */
 static void resetISR(void);
@@ -106,7 +107,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* EUSCIB2 ISR               */
     defaultISR,                             /* EUSCIB3 ISR               */
     defaultISR,                             /* ADC14 ISR                 */
-    defaultISR,                             /* T32_INT1 ISR              */
+    T32_INT1_IRQHandler,                    /* T32_INT1 ISR              */
     defaultISR,                             /* T32_INT2 ISR              */
     defaultISR,                             /* T32_INTC ISR              */
     defaultISR,                             /* AES ISR                   */
