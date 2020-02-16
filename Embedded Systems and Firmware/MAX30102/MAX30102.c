@@ -11,6 +11,7 @@
 #include "MAX30102.h"
 #include "rom_map.h"
 #include "driverlib.h"
+#include "Timer32.h"
 
 sense_struct sense;
 
@@ -354,7 +355,7 @@ uint8_t MAX30102_available(void){
 }
 
 uint32_t MAX30102_getIR(void){
-    if(MAX30102_check()){
+    if(MAX30102_safeCheck(25)){
         return sense.IR[sense.head];
     } else{
         return 0;
@@ -394,8 +395,9 @@ uint16_t MAX30102_check(void){
         int bytesLeftToRead = numberOfSamples * activeLEDs * 3;
 
         // Begin transmission
-        MAP_I2C_masterSendSingleByte(EUSCI_B0_BASE, MAX30105_FIFODATA);
-
+        if(!MAP_I2C_masterSendSingleByteWithTimeout(EUSCI_B0_BASE, MAX30105_FIFODATA, 250)){
+            return 0;
+        }
 
         while(bytesLeftToRead > 0){
             int toGet = bytesLeftToRead;
@@ -404,9 +406,6 @@ uint16_t MAX30102_check(void){
             }
 
             bytesLeftToRead -= toGet;
-
-            //Start Request
-            //MAP_I2C_masterReceiveStart(EUSCI_B0_BASE);
 
             while(toGet > 0){
                 sense.head++;
@@ -431,7 +430,9 @@ uint16_t MAX30102_check(void){
                     temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
                     temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
                     if(toGet == -1){
-                        temp[0] = MAP_I2C_masterReceiveMultiByteFinish(EUSCI_B0_BASE);
+                        if(!MAP_I2C_masterReceiveMultiByteFinishWithTimeout(EUSCI_B0_BASE, &temp[0], 250)){
+                            return 0;
+                        }
                     } else{
                         temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B0_BASE);
                     }
@@ -468,3 +469,16 @@ uint16_t MAX30102_check(void){
     return(numberOfSamples);
 }
 
+// Pass inputs in terms of 10ms
+bool MAX30102_safeCheck(uint8_t maxTimeToCheck){
+    uint64_t markTime = getOS_MsTime();
+    while(1){
+        if(getOS_MsTime() - markTime > maxTimeToCheck){
+            return false;
+        }
+        if(MAX30102_check() == true){
+            return(true);
+        }
+
+    }
+}
