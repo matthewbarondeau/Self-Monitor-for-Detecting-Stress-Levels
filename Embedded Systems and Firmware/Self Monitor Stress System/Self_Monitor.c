@@ -9,20 +9,20 @@
 #include "Drivers/CortexM.h"
 #include "Drivers/AP.h"
 #include "Drivers/UART0.h"
-#include "GMR.h"
 #include "GSR.h"
 #include "ROS.h"
+#include "Accelerometer.h"
 
 #define DEBUG0  // UART0 Debugging
 
-uint8_t Heartbeat = 0;
+uint8_t Accelerometer = 0;
 uint8_t GSR = 0;
 uint8_t ROS = 0;
 
-void readHeartbeat(){
+void readAccelerometer(){
     #ifdef DEBUG0
     UART0_OutString("Sent updated heartbeat: ");
-    UART0_OutUDec(Heartbeat);
+    UART0_OutUDec(Accelerometer);
     UART0_OutString("\n\r");
     #endif
 }
@@ -53,7 +53,7 @@ void main(void){
     #endif
 
     // Initialize Sensors
-    GMR_Init();
+    ACC_Init();
     GSR_Init();
     ROS_Init();
 
@@ -64,7 +64,7 @@ void main(void){
     AP_AddService(0x00FF);
 
     // Add Notify Characteristics for Heart Rate from GMR
-    AP_AddNotifyCharacteristic(0xFFF1, 1, &Heartbeat, "Heartbeat", &readHeartbeat);
+    AP_AddNotifyCharacteristic(0xFFF1, 1, &Accelerometer, "Accelerometer", &readAccelerometer);
 
     // Add Notify Characteristic for GSR
     AP_AddNotifyCharacteristic(0xFFF2, 1, &GSR, "GSR", &readGSR);
@@ -88,7 +88,7 @@ void main(void){
 
             // Read new value of Heartbeat
             // Send to Mobile Application
-            Heartbeat = GMR_Read_Data();
+            Accelerometer = ACC_Read_Data();
             if(AP_GetNotifyCCCD(0)){
                 AP_SendNotification(0);
             }

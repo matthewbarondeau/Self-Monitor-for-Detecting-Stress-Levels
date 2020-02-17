@@ -11,8 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include "Drivers/i2c.h"
-#include "Drivers/rom_map.h"
+#include "driverlib.h"
 //#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
 /* Slave Address for I2C Slave */
@@ -121,3 +120,10 @@ void Accelerometer_Init(){
 
 }
 
+void ACC_Init(void){
+
+}
+
+uint8_t ACC_Read_Data(void){
+    return 0;
+}

@@ -61,6 +61,9 @@ typedef enum
   MMA8451_DATARATE_MASK       = 0b111
 } mma8451_dataRate_t;
 
+void ACC_Init(void);
+
+uint8_t ACC_Read_Data(void);
 
 
 #endif /* ACCELEROMETER_H_ */

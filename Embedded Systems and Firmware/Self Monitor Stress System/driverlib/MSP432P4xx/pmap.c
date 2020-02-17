@@ -1,5 +1,10 @@
-/* --COPYRIGHT--,BSD
- * Copyright (c) 2017, Texas Instruments Incorporated
+/*
+ * -------------------------------------------
+ *    MSP432 DriverLib - v3_21_00_05 
+ * -------------------------------------------
+ *
+ * --COPYRIGHT--,BSD,BSD
+ * Copyright (c) 2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,12 +34,33 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#ifndef EUSCI_H_
-#define EUSCI_H_
+#include <debug.h>
+#include <pmap.h>
+#include <hw_memmap.h>
 
-#include "msp.h"
+void PMAP_configurePorts(const uint8_t *portMapping, uint8_t pxMAPy,
+        uint8_t numberOfPorts, uint8_t portMapReconfigure)
+{
+    uint_fast16_t i;
 
-#define EUSCI_A_CMSIS(x) ((EUSCI_A_Type *) x)
-#define EUSCI_B_CMSIS(x) ((EUSCI_B_Type *) x)
+    ASSERT(
+            (portMapReconfigure == PMAP_ENABLE_RECONFIGURATION)
+                    || (portMapReconfigure == PMAP_DISABLE_RECONFIGURATION));
 
-#endif /* EUSCI_H_ */
+    //Get write-access to port mapping registers:
+    PMAP->KEYID = PMAP_KEYID_VAL;
+
+    //Enable/Disable reconfiguration during runtime
+    PMAP->CTL = (PMAP->CTL & ~PMAP_CTL_PRECFG) | portMapReconfigure;
+
+    //Configure Port Mapping:
+    
+    for (i = 0; i < numberOfPorts * 8; i++)
+    {
+        HWREG8(PMAP_BASE + i + pxMAPy) = portMapping[i];
+    }
+
+    //Disable write-access to port mapping registers:
+    PMAP->KEYID = 0;
+}
+
