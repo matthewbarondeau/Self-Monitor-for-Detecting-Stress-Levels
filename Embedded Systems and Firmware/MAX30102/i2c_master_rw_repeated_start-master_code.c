@@ -1,7 +1,6 @@
 
 /* DriverLib Defines */
 #include "driverlib.h"
-#include "Clock.h"
 #include "Timer32.h"
 
 /* Standard Defines */
