@@ -1,6 +1,6 @@
 
 /* DriverLib Defines */
-#include "driverlib.h"
+#include "driverlib/MSP432P4xx/driverlib.h"
 #include "Timer32.h"
 
 /* Standard Defines */
@@ -10,7 +10,6 @@
 #include <string.h>
 
 #include "MAX30102.h"
-#include "i2cMAX30102.h"
 
 /* Slave Address for I2C Slave */
 #define SLAVE_ADDRESS       0x57

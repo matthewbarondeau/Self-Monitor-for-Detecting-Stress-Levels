@@ -10,10 +10,10 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
-"./Clock.obj" \
 "./Heartrate.obj" \
 "./MAX30102.obj" \
 "./SpO2.obj" \
+"./Timer32.obj" \
 "./i2cMAX30102.obj" \
 "./i2c_master_rw_repeated_start-master_code.obj" \
 "./startup_msp432p401r_ccs.obj" \
@@ -148,7 +148,7 @@ all: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 MAX30102.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=none -me -Ooff --opt_for_speed=0 --advice:power="all" --define=__MSP432P401R__ --define=TARGET_IS_MSP432P4XX --define=ccs --gcc --diag_warning=225 --diag_wrap=off --display_error_number -z -m"MAX30102.map" --stack_size=512 -i"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/lib" -i"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="MAX30102_linkInfo.xml" --rom_model -o "MAX30102.out" $(ORDERED_OBJS)
+	"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O2 --advice:power=all --define=__MSP432P401R__ --define=TARGET_IS_MSP432P4XX --define=ccs --gcc --diag_warning=225 --diag_wrap=off --display_error_number -z -m"MAX30102.map" --stack_size=512 -i"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/lib" -i"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="MAX30102_linkInfo.xml" --rom_model -o "MAX30102.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -164,8 +164,8 @@ MAX30102.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "Clock.obj" "Heartrate.obj" "MAX30102.obj" "SpO2.obj" "i2cMAX30102.obj" "i2c_master_rw_repeated_start-master_code.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
-	-$(RM) "Clock.d" "Heartrate.d" "MAX30102.d" "SpO2.d" "i2cMAX30102.d" "i2c_master_rw_repeated_start-master_code.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
+	-$(RM) "Heartrate.obj" "MAX30102.obj" "SpO2.obj" "Timer32.obj" "i2cMAX30102.obj" "i2c_master_rw_repeated_start-master_code.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
+	-$(RM) "Heartrate.d" "MAX30102.d" "SpO2.d" "Timer32.d" "i2cMAX30102.d" "i2c_master_rw_repeated_start-master_code.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

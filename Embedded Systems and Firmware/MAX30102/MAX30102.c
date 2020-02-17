@@ -5,12 +5,10 @@
  *      Author: Matthew Barondeau
  */
 
-#include <i2cMAX30102.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "MAX30102.h"
-#include "rom_map.h"
-#include "driverlib.h"
+#include "driverlib/MSP432P4xx/driverlib.h"
 #include "Timer32.h"
 
 sense_struct sense;
