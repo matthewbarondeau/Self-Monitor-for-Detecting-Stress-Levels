@@ -2,6 +2,7 @@
 /* DriverLib Defines */
 #include "driverlib.h"
 #include "Clock.h"
+#include "Timer32.h"
 
 /* Standard Defines */
 #include <stdint.h>
@@ -52,6 +53,9 @@ int main(void)
 
     MAP_I2C_disableInterrupt(EUSCI_B0_BASE, 0xFFFF);
 
+    // Keeps 10ms Time incriments
+    Timer32Init(30000);
+
     MAX30102_Init();
 
     // Check Connection
@@ -62,6 +66,7 @@ int main(void)
 
     setPulseAmplitudeRed(0x0A);
 
+    long values;
     while(1){
         long irValue = MAX30102_getIR();
         long values = MAX30102_available();
