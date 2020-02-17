@@ -27,6 +27,8 @@ void MAX30102_nextSample(void);
 
 uint16_t MAX30102_check(void);
 
+bool MAX30102_safeCheck(uint8_t maxTimeToCheck);
+
 #define STORAGE_SIZE 4
 typedef struct Record
 {
