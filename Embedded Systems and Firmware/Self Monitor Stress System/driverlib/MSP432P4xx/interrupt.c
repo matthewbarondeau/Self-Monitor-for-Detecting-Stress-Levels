@@ -38,10 +38,10 @@
 #include <stdint.h>
 
 /* DriverLib Includes */
-#include <debug.h>
-#include <cpu.h>
-#include <interrupt.h>
-#include <hw_memmap.h>
+#include "debug.h"
+#include "cpu.h"
+#include "interrupt.h"
+#include "hw_memmap.h"
 
 //*****************************************************************************
 //

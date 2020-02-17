@@ -38,10 +38,10 @@
 #include <stdint.h>
 
 /* DriverLib Includes */
-#include <gpio.h>
-#include <debug.h>
-#include <interrupt.h>
-#include <hw_memmap.h>
+#include "gpio.h"
+#include "debug.h"
+#include "interrupt.h"
+#include "hw_memmap.h"
 
 /* DriverLib internal GPIO register offset for optimized performance */
 #define OFS_LIB_PAIN  ((uint32_t)&P1->IN - (uint32_t)P1)

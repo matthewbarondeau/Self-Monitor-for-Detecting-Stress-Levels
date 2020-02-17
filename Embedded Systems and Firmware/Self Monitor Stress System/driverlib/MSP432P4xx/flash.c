@@ -38,14 +38,14 @@
 #include <stdint.h>
 
 /* DriverLib Includes */
-#include <flash.h>
-#include <debug.h>
-#include <interrupt.h>
-#include <msp.h>
-#include <cpu.h>
-#include <rom.h>
-#include <sysctl.h>
-#include <hw_memmap.h>
+#include "flash.h"
+#include "debug.h"
+#include "interrupt.h"
+#include "msp.h"
+#include "cpu.h"
+#include "rom.h"
+#include "sysctl.h"
+#include "hw_memmap.h"
 
 static const uint32_t MAX_ERASE_NO_TLV = 50;
 static const uint32_t MAX_PROGRAM_NO_TLV = 5;

@@ -36,9 +36,9 @@
  * --/COPYRIGHT--*/
 #include <stdint.h>
 
-#include <debug.h>
-#include <interrupt.h>
-#include <dma.h>
+#include "debug.h"
+#include "interrupt.h"
+#include "dma.h"
 
 void DMA_enableModule(void)
 {

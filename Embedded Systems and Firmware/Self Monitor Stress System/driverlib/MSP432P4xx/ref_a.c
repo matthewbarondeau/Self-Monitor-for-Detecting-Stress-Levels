@@ -34,8 +34,8 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <ref_a.h>
-#include <debug.h>
+#include "ref_a.h"
+#include "debug.h"
 
 void REF_A_setReferenceVoltage(uint_fast8_t referenceVoltageSelect)
 {

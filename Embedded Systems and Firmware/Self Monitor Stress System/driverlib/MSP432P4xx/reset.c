@@ -34,8 +34,8 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <reset.h>
-#include <debug.h>
+#include "reset.h"
+#include "debug.h"
 
 void ResetCtl_initiateSoftReset(void)
 {

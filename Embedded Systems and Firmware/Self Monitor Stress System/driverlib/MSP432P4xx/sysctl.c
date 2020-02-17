@@ -39,8 +39,8 @@
 #include <stdbool.h>
 
 /* DriverLib Includes */
-#include <sysctl.h>
-#include <debug.h>
+#include "sysctl.h"
+#include "debug.h"
 
 #ifdef DEBUG
 

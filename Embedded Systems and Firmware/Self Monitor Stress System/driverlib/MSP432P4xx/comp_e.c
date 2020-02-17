@@ -34,9 +34,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <comp_e.h>
-#include <interrupt.h>
-#include <debug.h>
+#include "comp_e.h"
+#include "interrupt.h"
+#include "debug.h"
 
 static uint16_t __getRegisterSettingForInput(uint32_t input)
 {

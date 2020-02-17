@@ -34,9 +34,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <debug.h>
-#include <pmap.h>
-#include <hw_memmap.h>
+#include "debug.h"
+#include "pmap.h"
+#include "hw_memmap.h"
 
 void PMAP_configurePorts(const uint8_t *portMapping, uint8_t pxMAPy,
         uint8_t numberOfPorts, uint8_t portMapReconfigure)

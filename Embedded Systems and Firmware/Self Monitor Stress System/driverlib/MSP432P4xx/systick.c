@@ -34,9 +34,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <debug.h>
-#include <interrupt.h>
-#include <systick.h>
+#include "debug.h"
+#include "interrupt.h"
+#include "systick.h"
 
 void SysTick_enableModule(void)
 {

@@ -34,10 +34,10 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <rtc_c.h>
-#include <interrupt.h>
-#include <debug.h>
-#include <hw_memmap.h>
+#include "rtc_c.h"
+#include "interrupt.h"
+#include "debug.h"
+#include "hw_memmap.h"
 
 void RTC_C_startClock(void)
 {

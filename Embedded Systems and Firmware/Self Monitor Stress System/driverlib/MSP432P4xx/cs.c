@@ -38,10 +38,10 @@
 #include <stdint.h>
 
 /* DriverLib Includes */
-#include <cs.h>
-#include <debug.h>
-#include <sysctl.h>
-#include <interrupt.h>
+#include "cs.h"
+#include "debug.h"
+#include "sysctl.h"
+#include "interrupt.h"
 
 /* Statics */
 static uint32_t hfxtFreq;

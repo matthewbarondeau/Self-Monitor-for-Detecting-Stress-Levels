@@ -34,10 +34,10 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <spi.h>
-#include <interrupt.h>
-#include <debug.h>
-#include <eusci.h>
+#include "spi.h"
+#include "interrupt.h"
+#include "debug.h"
+#include "eusci.h"
 
 static bool is_A_Module(uint32_t module)
 {

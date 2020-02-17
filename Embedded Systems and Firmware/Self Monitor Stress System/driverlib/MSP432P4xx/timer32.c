@@ -34,9 +34,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <timer32.h>
-#include <interrupt.h>
-#include <debug.h>
+#include "timer32.h"
+#include "interrupt.h"
+#include "debug.h"
 
 void Timer32_initModule(uint32_t timer, uint32_t preScaler, uint32_t resolution,
         uint32_t mode)

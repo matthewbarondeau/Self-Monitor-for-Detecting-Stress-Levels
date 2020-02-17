@@ -34,9 +34,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <timer_a.h>
-#include <interrupt.h>
-#include <debug.h>
+#include "timer_a.h"
+#include "interrupt.h"
+#include "debug.h"
 
 static void privateTimer_AProcessClockSourceDivider(uint32_t timer,
         uint16_t clockSourceDivider)

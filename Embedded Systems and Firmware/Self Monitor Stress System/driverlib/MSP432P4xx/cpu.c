@@ -34,8 +34,8 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <cpu.h>
-#include <msp.h>
+#include "cpu.h"
+#include "msp.h"
 #include <stdint.h>
 
 //*****************************************************************************

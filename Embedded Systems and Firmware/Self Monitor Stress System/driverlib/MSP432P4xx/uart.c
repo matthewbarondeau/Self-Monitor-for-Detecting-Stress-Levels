@@ -34,10 +34,10 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <uart.h>
-#include <interrupt.h>
-#include <debug.h>
-#include <eusci.h>
+#include "uart.h"
+#include "interrupt.h"
+#include "debug.h"
+#include "eusci.h"
 
 bool UART_initModule(uint32_t moduleInstance, const eUSCI_UART_Config *config)
 {

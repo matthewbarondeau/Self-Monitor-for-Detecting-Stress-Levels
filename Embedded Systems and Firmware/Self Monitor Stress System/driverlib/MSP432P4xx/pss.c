@@ -38,10 +38,10 @@
 #include <stdint.h>
 
 /* DriverLib Includes */
-#include <pss.h>
-#include <interrupt.h>
-#include <debug.h>
-#include <cpu.h>
+#include "pss.h"
+#include "interrupt.h"
+#include "debug.h"
+#include "cpu.h"
 
 static void __PSSUnlock()
 {

@@ -38,12 +38,12 @@
 #include <stdint.h>
 
 /* DriverLib Includes */
-#include <pcm.h>
-#include <debug.h>
-#include <interrupt.h>
-#include <wdt_a.h>
-#include <rtc_c.h>
-#include <cpu.h>
+#include "pcm.h"
+#include "debug.h"
+#include "interrupt.h"
+#include "wdt_a.h"
+#include "rtc_c.h"
+#include "cpu.h"
 
 static bool __PCM_setCoreVoltageLevelAdvanced(uint_fast8_t voltageLevel,
         uint32_t timeOut, bool blocking)

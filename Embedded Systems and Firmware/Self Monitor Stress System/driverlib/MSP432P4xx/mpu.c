@@ -34,9 +34,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <debug.h>
-#include <interrupt.h>
-#include <mpu.h>
+#include "debug.h"
+#include "interrupt.h"
+#include "mpu.h""
 
 void MPU_enableModule(uint32_t mpuConfig)
 {

@@ -38,9 +38,9 @@
 #include <stdint.h>
 
 /* DriverLib Includes */
-#include <wdt_a.h>
-#include <debug.h>
-#include <interrupt.h>
+#include "wdt_a.h"
+#include "debug.h"
+#include "interrupt.h"
 
 void WDT_A_holdTimer(void)
 {

@@ -39,9 +39,9 @@
 #include <stdbool.h>
 
 /* DriverLib Includes */
-#include <adc14.h>
-#include <debug.h>
-#include <interrupt.h>
+#include "adc14.h"
+#include "debug.h"
+#include "interrupt.h"
 
 /* Statics */
 static volatile uint32_t* const _ctlRegs[32] =

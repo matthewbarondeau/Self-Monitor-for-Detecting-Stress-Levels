@@ -34,10 +34,10 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-#include <i2c.h>
-#include <interrupt.h>
-#include <debug.h>
-#include <hw_memmap.h>
+#include "i2c.h"
+#include "interrupt.h"
+#include "debug.h"
+#include "hw_memmap.h"
 
 void I2C_initMaster(uint32_t moduleInstance, const eUSCI_I2C_MasterConfig *config)
 {
