@@ -128,6 +128,14 @@ typedef struct
 } eUSCI_I2C_MasterConfig;
 
 
+
+
+void writeRegister8(uint8_t reg, uint8_t value);
+
+uint8_t readRegister8(uint8_t reg);
+
+void bitMask(uint8_t reg, uint8_t mask, uint8_t thing);
+
 //*****************************************************************************
 //
 //! Initializes the I2C Master block.
