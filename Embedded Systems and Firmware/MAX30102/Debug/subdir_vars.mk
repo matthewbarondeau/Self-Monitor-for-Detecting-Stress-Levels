@@ -8,6 +8,9 @@ SHELL = cmd.exe
 CMD_SRCS += \
 ../i2c_master_rw_repeated_start-master_code_ccs.cmd 
 
+LIB_SRCS += \
+C:/Users/Matthew\ Barondeau/Downloads/msp432_driverlib_3_21_00_05/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib 
+
 C_SRCS += \
 ../Heartrate.c \
 ../MAX30102.c \

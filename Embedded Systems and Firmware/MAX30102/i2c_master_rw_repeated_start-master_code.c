@@ -35,21 +35,21 @@ int main(void)
     /* Select Port 1 for I2C - Set Pin 6, 7 to input Primary Module Function,
      *   (UCB0SIMO/UCB0SDA, UCB0SOMI/UCB0SCL).
      */
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-            GPIO_PIN6 + GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
+    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
+            GPIO_PIN4 + GPIO_PIN5, GPIO_PRIMARY_MODULE_FUNCTION);
 
     /* Initializing I2C Master to SMCLK at 400khz with no autostop */
-    MAP_I2C_initMaster(EUSCI_B0_BASE, &i2cConfig);
+    MAP_I2C_initMaster(EUSCI_B1_BASE, &i2cConfig);
 
-    MAP_I2C_setMode(EUSCI_B0_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
+    MAP_I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
 
     /* Specify slave address */
-    MAP_I2C_setSlaveAddress(EUSCI_B0_BASE, SLAVE_ADDRESS);
+    MAP_I2C_setSlaveAddress(EUSCI_B1_BASE, SLAVE_ADDRESS);
 
     /* Enable I2C Module to start operations */
-    MAP_I2C_enableModule(EUSCI_B0_BASE);
+    MAP_I2C_enableModule(EUSCI_B1_BASE);
 
-    MAP_I2C_disableInterrupt(EUSCI_B0_BASE, 0xFFFF);
+    MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
 
     // Keeps 10ms Time incriments
     Timer32Init(30000);
