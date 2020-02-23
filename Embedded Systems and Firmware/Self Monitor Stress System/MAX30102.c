@@ -312,19 +312,19 @@ int MAX30102_Init(void){
     // LED Brightness
     // Between 0 and 255
     // 0 the LED is off, 255 it draws 50mA
-    uint8_t ledBrightness = 255;
+    uint8_t ledBrightness = 0x1F;
 
     // sampleAveraging
     // Options of 1, 2, 4, 8, 16, and 32
-    uint8_t sampleAverage = 16;
+    uint8_t sampleAverage = 4;
 
     // LED Mode
     // Options: 1 = Red, 2 = Red + IR, 3 = Red + IR + Green
-    uint8_t ledMode = 2;
+    uint8_t ledMode = 3;
 
     // Sample Rate
     // Options of 50, 100, 200, 400, 800, 1000, 1600, 3200
-    uint8_t sampleRate = 100;
+    uint16_t sampleRate = 400;
 
     // Pulse width
     // Options of 69, 118, 215, and 411
@@ -333,7 +333,7 @@ int MAX30102_Init(void){
 
     // ADC Range
     // Options of 2048, 4096, 8192, 16384
-    int adcRange = 16384;
+    int adcRange = 4096;
 
     MAX30102_Setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
 
@@ -353,7 +353,7 @@ uint8_t MAX30102_available(void){
 }
 
 uint32_t MAX30102_getIR(void){
-    if(MAX30102_safeCheck(25)){
+    if(MAX30102_checkDevice()){
         return sense.IR[sense.head];
     } else{
         return 0;
@@ -361,8 +361,8 @@ uint32_t MAX30102_getIR(void){
 }
 
 uint32_t MAX30102_getRed(void){
-    if(MAX30102_safeCheck(25)){
-        return sense.red[sense.head];
+    if(MAX30102_checkDevice()){
+        return sense.IR[sense.head];
     } else{
         return 0;
     }
@@ -386,7 +386,6 @@ void MAX30102_nextSample(void){
         sense.tail %= STORAGE_SIZE;
     }
 }
-
 uint16_t MAX30102_checkDevice(void){
 
     uint8_t readPointer = getReadPointer();
@@ -412,12 +411,6 @@ uint16_t MAX30102_checkDevice(void){
         // repeated start
         EUSCI_B1->CTLW0 &= ~EUSCI_B_CTLW0_TR;
         EUSCI_B1->CTLW0 | EUSCI_B_CTLW0_TXSTT;
-
-        // send read mode + address
-        //?
-
-        //I2C_masterSendMultiByteNext(ESUCI_B1_BASE, MAX30105_FIFODATA);
-
 
         while(bytesLeftToRead > 0){
             int toGet = bytesLeftToRead;
@@ -482,6 +475,8 @@ uint16_t MAX30102_checkDevice(void){
             }
         }
     }
+    return numberOfSamples;
+
 }
 
 uint16_t MAX30102_check(void){
