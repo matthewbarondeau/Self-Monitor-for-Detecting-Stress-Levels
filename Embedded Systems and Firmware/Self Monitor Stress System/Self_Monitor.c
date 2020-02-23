@@ -44,7 +44,7 @@ void readROS(){
 }
 
 void main(void){
-	Clock_Init48MHz();
+	//Clock_Init48MHz();
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
     LaunchPad_Init();
 
