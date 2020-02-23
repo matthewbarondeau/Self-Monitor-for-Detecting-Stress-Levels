@@ -60,8 +60,6 @@ uint8_t readRegister8(uint8_t reg){
     /* Send out EEPROM Mock Read Cmd (2 databytes) */
     I2C_masterSendMultiByteStart(EUSCI_B1_BASE, reg);  // Start + 1Byte
 
-
-    //MAP_I2C_masterSendMultiByteFinish(EUSCI_B0_BASE, reg); // Poll for TXINT,Send 1Byte
     /*---------------------------------------------*/
     /* Now we need to initiate the read */
     /* Wait until 2nd Byte has been output to shift register */

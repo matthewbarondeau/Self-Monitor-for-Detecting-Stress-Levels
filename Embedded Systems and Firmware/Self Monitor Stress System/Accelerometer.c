@@ -78,17 +78,45 @@ void ACC_Init(void){
     // Activate at max rate, low noise mode
     writeRegister8(MMA8451_REG_CTRL_REG1, 0x01 | 0x04);
 
-    //MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN1);
-
-    writeRegister8(MMA8451_REG_WHOAMI, 0x01);
-
-    deviceid = readRegister8(MMA8451_REG_WHOAMI);
-
     x = 0;
     y = 0;
     z = 0;
+
+    ACC_Read_Data();
+    ACC_Read_Data();
+    ACC_Read_Data();
+    ACC_Read_Data();
 }
 
 uint8_t ACC_Read_Data(void){
-    return 0;
+
+    I2C_masterSendMultiByteStart(EUSCI_B1_BASE, MMA8451_REG_OUT_X_MSB);
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
+
+    // repeated start
+    I2C_masterReceiveStart(EUSCI_B1_BASE);
+
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    x = I2C_slaveGetData(EUSCI_B1_BASE);
+    x = x << 8;
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    x |= I2C_slaveGetData(EUSCI_B1_BASE);
+    x = x >> 2;
+
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    y = I2C_slaveGetData(EUSCI_B1_BASE);
+    y = y << 8;
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    y |= I2C_slaveGetData(EUSCI_B1_BASE);
+    y = y >> 2;
+
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    z = I2C_slaveGetData(EUSCI_B1_BASE);
+    z = z << 8;
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    z |= I2C_slaveGetData(EUSCI_B1_BASE);
+    z = z >> 2;
+
+    //I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
+
 }
