@@ -312,19 +312,19 @@ int MAX30102_Init(void){
     // LED Brightness
     // Between 0 and 255
     // 0 the LED is off, 255 it draws 50mA
-    uint8_t ledBrightness = 255;
+    uint8_t ledBrightness = 0x1F;
 
     // sampleAveraging
     // Options of 1, 2, 4, 8, 16, and 32
-    uint8_t sampleAverage = 16;
+    uint8_t sampleAverage = 4;
 
     // LED Mode
     // Options: 1 = Red, 2 = Red + IR, 3 = Red + IR + Green
-    uint8_t ledMode = 2;
+    uint8_t ledMode = 3;
 
     // Sample Rate
     // Options of 50, 100, 200, 400, 800, 1000, 1600, 3200
-    uint8_t sampleRate = 100;
+    uint16_t sampleRate = 400;
 
     // Pulse width
     // Options of 69, 118, 215, and 411
@@ -333,7 +333,7 @@ int MAX30102_Init(void){
 
     // ADC Range
     // Options of 2048, 4096, 8192, 16384
-    int adcRange = 16384;
+    int adcRange = 4096;
 
     MAX30102_Setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
 
@@ -353,7 +353,7 @@ uint8_t MAX30102_available(void){
 }
 
 uint32_t MAX30102_getIR(void){
-    if(MAX30102_safeCheck(25)){
+    if(MAX30102_checkDevice()){
         return sense.IR[sense.head];
     } else{
         return 0;
@@ -376,6 +376,98 @@ void MAX30102_nextSample(void){
         sense.tail++;
         sense.tail %= STORAGE_SIZE;
     }
+}
+uint16_t MAX30102_checkDevice(void){
+
+    uint8_t readPointer = getReadPointer();
+    uint8_t writePointer = getWritePointer();
+
+    int numberOfSamples = 0;
+
+    if(readPointer != writePointer){
+        numberOfSamples = writePointer - readPointer;
+        if(numberOfSamples < 0){
+            numberOfSamples += 32;
+        }
+
+        int bytesLeftToRead = numberOfSamples * activeLEDs * 3;
+
+        // Start
+        // send address + write mode
+        I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
+        I2C_masterSendMultiByteStart(EUSCI_B1_BASE, MAX30105_FIFODATA);
+
+        while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
+
+        // repeated start
+        EUSCI_B1->CTLW0 &= ~EUSCI_B_CTLW0_TR;
+        EUSCI_B1->CTLW0 | EUSCI_B_CTLW0_TXSTT;
+
+        while(bytesLeftToRead > 0){
+            int toGet = bytesLeftToRead;
+            if(toGet > 64){
+                toGet = 64 - (64 % (activeLEDs * 3));
+            }
+
+            bytesLeftToRead -= 64;
+
+            while(toGet > 0){
+                sense.head++;
+                sense.head %= STORAGE_SIZE;
+
+                uint8_t temp[sizeof(uint32_t)];
+                uint32_t tempLong;
+
+                temp[3] = 0;
+                temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+                temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+                temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+
+                memcpy(&tempLong, temp, sizeof(tempLong));
+
+                tempLong &= 0x3FFFF;
+
+                sense.red[sense.head] = tempLong;
+
+                if(activeLEDs > 1){
+                    temp[3] = 0;
+                    temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+                    temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+                    if(toGet == -1){
+                        if(!MAP_I2C_masterReceiveMultiByteFinishWithTimeout(EUSCI_B1_BASE, &temp[0], 250)){
+                            return 0;
+                        }
+                    } else{
+                        temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+                    }
+
+                    memcpy(&tempLong, temp, sizeof(tempLong));
+
+                    tempLong &= 0x3FFFF;
+
+                    sense.IR[sense.head] = tempLong;
+                }
+
+                if (activeLEDs > 2){
+                    temp[3] = 0;
+                    temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+                    temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+                    temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
+
+                    memcpy(&tempLong, temp, sizeof(tempLong));
+
+                    tempLong &= 0x3FFFF; //Zero out all but 18 bits
+
+                    sense.green[sense.head] = tempLong;
+                }
+
+                toGet -= activeLEDs * 3;
+
+            }
+        }
+    }
+    return numberOfSamples;
+
 }
 
 uint16_t MAX30102_check(void){

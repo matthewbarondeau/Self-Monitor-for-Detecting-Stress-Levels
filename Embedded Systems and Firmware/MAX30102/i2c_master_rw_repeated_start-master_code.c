@@ -62,12 +62,19 @@ int main(void)
         while(1){};
     }
 
-    setPulseAmplitudeRed(0x0A);
+    //setPulseAmplitudeRed(0x0A);
 
     long values;
+    long irValue;
     while(1){
-        long irValue = MAX30102_getIR();
-        long values = MAX30102_available();
+        if(MAX30102_available()){
+            irValue = MAX30102_getFIFOIR();
+        } else{
+            irValue = MAX30102_getIR();
+        }
+        MAX30102_nextSample();
+        //long irValue = MAX30102_getIR();
+        //long values = MAX30102_available();
         values += 0;
     };
 

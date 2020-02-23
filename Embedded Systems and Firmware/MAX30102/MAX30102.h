@@ -25,11 +25,13 @@ uint32_t MAX30102_getFIFOGreen(void);
 
 void MAX30102_nextSample(void);
 
+uint16_t MAX30102_checkDevice(void);
+
 uint16_t MAX30102_check(void);
 
 bool MAX30102_safeCheck(uint8_t maxTimeToCheck);
 
-#define STORAGE_SIZE 4
+#define STORAGE_SIZE 1
 typedef struct Record
 {
   uint32_t red[STORAGE_SIZE];
