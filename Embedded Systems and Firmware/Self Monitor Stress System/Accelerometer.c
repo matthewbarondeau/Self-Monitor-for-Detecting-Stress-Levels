@@ -60,6 +60,8 @@ void ACC_Init(void){
 
     writeRegister8(MMA8451_REG_CTRL_REG2, 0x40); // reset
 
+    __delay_cycles(1000);
+
     while (readRegister8(MMA8451_REG_CTRL_REG2) & 0x40);
 
     // enable 4G range
@@ -88,7 +90,25 @@ void ACC_Init(void){
     ACC_Read_Data();
 }
 
+float ACC_Acceleration_X(int16_t x){
+    float x_g = (float) x / 2048;
+    return 9.80665 * x_g;
+}
+
+float ACC_Acceleration_Y(int16_t y){
+    float y_g = (float) y / 2048;
+    return 9.80665 * y_g;
+}
+
+float ACC_Acceleration_Z(int16_t z){
+    float z_g = (float) z / 2048;
+    return 9.80665 * z_g;
+}
+
 uint8_t ACC_Read_Data(void){
+    x = 0;
+    y = 0;
+    z = 0;
 
     I2C_masterSendMultiByteStart(EUSCI_B1_BASE, MMA8451_REG_OUT_X_MSB);
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
@@ -113,10 +133,21 @@ uint8_t ACC_Read_Data(void){
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
     z = I2C_slaveGetData(EUSCI_B1_BASE);
     z = z << 8;
+
+    I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
     z |= I2C_slaveGetData(EUSCI_B1_BASE);
     z = z >> 2;
-
+    __delay_cycles(10000);  // need this here for correct values for some reason
+    int q = I2C_slaveGetData(EUSCI_B1_BASE);
     //I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
 
+    float xACC = ACC_Acceleration_X(x);
+    float yACC = ACC_Acceleration_Y(y);
+    float zACC = ACC_Acceleration_Z(z);
+    xACC += 0;
+    yACC += 0;
+    zACC += 0;
+    __delay_cycles(10000);
 }
+
