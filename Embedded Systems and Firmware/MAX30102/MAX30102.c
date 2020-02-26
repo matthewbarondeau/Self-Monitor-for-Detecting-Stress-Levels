@@ -320,7 +320,7 @@ int MAX30102_Init(void){
 
     // LED Mode
     // Options: 1 = Red, 2 = Red + IR, 3 = Red + IR + Green
-    uint8_t ledMode = 3;
+    uint8_t ledMode = 2;
 
     // Sample Rate
     // Options of 50, 100, 200, 400, 800, 1000, 1600, 3200
@@ -379,95 +379,57 @@ void MAX30102_nextSample(void){
 }
 uint16_t MAX30102_checkDevice(void){
 
-    uint8_t readPointer = getReadPointer();
-    uint8_t writePointer = getWritePointer();
+    // Start
+    // send address + write mode
+    I2C_masterSendMultiByteStart(EUSCI_B1_BASE, MAX30105_FIFODATA);
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
 
-    int numberOfSamples = 0;
+    // repeated start
+    I2C_masterReceiveStart(EUSCI_B1_BASE);
 
-    if(readPointer != writePointer){
-        numberOfSamples = writePointer - readPointer;
-        if(numberOfSamples < 0){
-            numberOfSamples += 32;
-        }
+    sense.head++;
+    sense.head &= 3;
 
-        int bytesLeftToRead = numberOfSamples * activeLEDs * 3;
+    uint8_t temp[sizeof(uint32_t)];
+    uint32_t tempLong;
 
-        // Start
-        // send address + write mode
-        I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
-        I2C_masterSendMultiByteStart(EUSCI_B1_BASE, MAX30105_FIFODATA);
+    temp[3] = 0;
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    temp[2] = I2C_slaveGetData(EUSCI_B1_BASE);
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    temp[1] = I2C_slaveGetData(EUSCI_B1_BASE);
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    temp[0] = I2C_slaveGetData(EUSCI_B1_BASE);
 
-        while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
+    memcpy(&tempLong, temp, sizeof(tempLong));
 
-        // repeated start
-        EUSCI_B1->CTLW0 &= ~EUSCI_B_CTLW0_TR;
-        EUSCI_B1->CTLW0 | EUSCI_B_CTLW0_TXSTT;
+    tempLong &= 0x3FFFF;
 
-        while(bytesLeftToRead > 0){
-            int toGet = bytesLeftToRead;
-            if(toGet > 64){
-                toGet = 64 - (64 % (activeLEDs * 3));
-            }
+    sense.red[sense.head] = tempLong;
 
-            bytesLeftToRead -= 64;
+    if(activeLEDs > 1){
+        temp[3] = 0;
+        while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+        temp[2] = I2C_slaveGetData(EUSCI_B1_BASE);
+        while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+        temp[1] = I2C_slaveGetData(EUSCI_B1_BASE);
+        //while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+        I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
+        __delay_cycles(10000);
+        while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+        temp[0] = I2C_slaveGetData(EUSCI_B1_BASE);
 
-            while(toGet > 0){
-                sense.head++;
-                sense.head %= STORAGE_SIZE;
+        memcpy(&tempLong, temp, sizeof(tempLong));
 
-                uint8_t temp[sizeof(uint32_t)];
-                uint32_t tempLong;
+        tempLong &= 0x3FFFF;
 
-                temp[3] = 0;
-                temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-                temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-                temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-
-                memcpy(&tempLong, temp, sizeof(tempLong));
-
-                tempLong &= 0x3FFFF;
-
-                sense.red[sense.head] = tempLong;
-
-                if(activeLEDs > 1){
-                    temp[3] = 0;
-                    temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-                    temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-                    if(toGet == -1){
-                        if(!MAP_I2C_masterReceiveMultiByteFinishWithTimeout(EUSCI_B1_BASE, &temp[0], 250)){
-                            return 0;
-                        }
-                    } else{
-                        temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-                    }
-
-                    memcpy(&tempLong, temp, sizeof(tempLong));
-
-                    tempLong &= 0x3FFFF;
-
-                    sense.IR[sense.head] = tempLong;
-                }
-
-                if (activeLEDs > 2){
-                    temp[3] = 0;
-                    temp[2] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-                    temp[1] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-                    temp[0] = MAP_I2C_masterReceiveMultiByteNext(EUSCI_B1_BASE);
-
-                    memcpy(&tempLong, temp, sizeof(tempLong));
-
-                    tempLong &= 0x3FFFF; //Zero out all but 18 bits
-
-                    sense.green[sense.head] = tempLong;
-                }
-
-                toGet -= activeLEDs * 3;
-
-            }
-        }
+        sense.IR[sense.head] = tempLong;
     }
-    return numberOfSamples;
-
+    while(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0){
+        int foo = I2C_slaveGetData(EUSCI_B1_BASE);
+    }
+    __delay_cycles(10000);
+    return 1;
 }
 
 uint16_t MAX30102_check(void){

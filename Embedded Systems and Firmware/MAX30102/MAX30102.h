@@ -31,7 +31,7 @@ uint16_t MAX30102_check(void);
 
 bool MAX30102_safeCheck(uint8_t maxTimeToCheck);
 
-#define STORAGE_SIZE 1
+#define STORAGE_SIZE 4
 typedef struct Record
 {
   uint32_t red[STORAGE_SIZE];
