@@ -102,7 +102,7 @@ void main(void){
 
             // Read new value of ROS
             // Send to Mobile Application
-            ROS = ROS_Read_Data();
+            ROS = ROS_Read_IR();
             if(AP_GetNotifyCCCD(2)){
                 AP_SendNotification(2);
             }
