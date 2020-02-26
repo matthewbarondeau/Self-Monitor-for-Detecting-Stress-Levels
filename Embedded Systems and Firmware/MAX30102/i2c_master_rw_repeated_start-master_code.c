@@ -10,6 +10,8 @@
 #include <string.h>
 
 #include "MAX30102.h"
+#include "UART0.h"
+#include "Clock.h"
 
 /* Slave Address for I2C Slave */
 #define SLAVE_ADDRESS       0x57
@@ -52,9 +54,9 @@ int main(void)
     MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
 
     // Keeps 10ms Time incriments
-    Timer32Init(30000);
+    // Timer32Init(30000);
 
-    MAX30102_Init();
+    UART0_Init();
 
     // Check Connection
     uint8_t deviceid = readRegister8(0xFF);
@@ -62,21 +64,19 @@ int main(void)
         while(1){};
     }
 
-    //setPulseAmplitudeRed(0x0A);
+    MAX30102_Init();
 
-    long values;
+    setPulseAmplitudeRed(0x0A);
+    deviceid = readRegister8(0xFF);
+
     long irValue;
     while(1){
-        if(MAX30102_available()){
-            irValue = MAX30102_getFIFOIR();
-        } else{
-            irValue = MAX30102_getIR();
-        }
+        irValue = MAX30102_getIR();
         MAX30102_nextSample();
-        //long irValue = MAX30102_getIR();
-        //long values = MAX30102_available();
-        values += 0;
-    };
+        UART0_OutString("IrValue: ");
+        UART0_OutUDec(irValue);
+        UART0_OutString("\n\r");
+    }
 
 }
 

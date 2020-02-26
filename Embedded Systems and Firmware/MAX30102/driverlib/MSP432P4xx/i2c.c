@@ -44,6 +44,7 @@
 void writeRegister8(uint8_t reg, uint8_t value){
     while(I2C_masterIsStartSent(EUSCI_B1_BASE));
     I2C_masterSendMultiByteStart(EUSCI_B1_BASE, reg);  // Start + 1Byte
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
     I2C_masterSendMultiByteNext(EUSCI_B1_BASE, value);
     //I2C_masterSendMultiByteNext(EUSCI_B0_BASE, value); // Poll for TXINT,Send 1Byte
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
