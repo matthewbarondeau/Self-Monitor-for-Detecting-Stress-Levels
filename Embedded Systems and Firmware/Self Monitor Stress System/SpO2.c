@@ -5,14 +5,6 @@
  *      Author: Matthew Barondeau
  */
 
-
-/*
- * spo2.c
- *
- *  Created on: Jan 29, 2020
- *      Author: Matthew Barondeau
- */
-
 #include "spo2.h"
 #include <stdint.h>
 #include <stdbool.h>
