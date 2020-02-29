@@ -53,32 +53,32 @@ void ACC_init(void){
     MAP_I2C_disableInterrupt(I2C_MODULE, 0xFFFF);
 
     // Check Connection
-    uint8_t deviceid = readRegister8(MMA8451_REG_WHOAMI);
+    uint8_t deviceid = I2C_readRegister(I2C_MODULE, MMA8451_REG_WHOAMI);
     if(deviceid != 0x1A){
         while(1);
     }
 
-    writeRegister8(MMA8451_REG_CTRL_REG2, 0x40); // reset
+    I2C_writeRegister(I2C_MODULE, MMA8451_REG_CTRL_REG2, 0x40); // reset
 
     __delay_cycles(1000);
 
-    while (readRegister8(MMA8451_REG_CTRL_REG2) & 0x40);
+    while (I2C_readRegister(I2C_MODULE, MMA8451_REG_CTRL_REG2) & 0x40);
 
     // enable 4G range
-    writeRegister8(MMA8451_REG_XYZ_DATA_CFG, MMA8451_RANGE_4_G);
+    I2C_writeRegister(I2C_MODULE, MMA8451_REG_XYZ_DATA_CFG, MMA8451_RANGE_4_G);
 
     // High res
-    writeRegister8(MMA8451_REG_CTRL_REG2, 0x02);
+    I2C_writeRegister(I2C_MODULE, MMA8451_REG_CTRL_REG2, 0x02);
 
     // DRDY on INT1
-    writeRegister8(MMA8451_REG_CTRL_REG4, 0x01);
-    writeRegister8(MMA8451_REG_CTRL_REG5, 0x01);
+    I2C_writeRegister(I2C_MODULE, MMA8451_REG_CTRL_REG4, 0x01);
+    I2C_writeRegister(I2C_MODULE, MMA8451_REG_CTRL_REG5, 0x01);
 
     // Turn on orientation config
-    writeRegister8(MMA8451_REG_PL_CFG, 0x40);
+    I2C_writeRegister(I2C_MODULE, MMA8451_REG_PL_CFG, 0x40);
 
     // Activate at max rate, low noise mode
-    writeRegister8(MMA8451_REG_CTRL_REG1, 0x01 | 0x04);
+    I2C_writeRegister(I2C_MODULE, MMA8451_REG_CTRL_REG1, 0x01 | 0x04);
 
     x = 0;
     y = 0;

@@ -127,14 +127,19 @@ typedef struct
     uint_fast8_t autoSTOPGeneration;
 } eUSCI_I2C_MasterConfig;
 
+// I2C_writeRegister
+// Writes value to specified register
+void I2C_writeRegister(uint32_t module, uint8_t reg, uint8_t value);
 
+// I2C_readRegister
+// Read 8 bit register from I2C peripheral
+// Uses repeated start to perform read
+uint8_t I2C_readRegister(uint32_t module, uint8_t reg);
 
-
-void writeRegister8(uint8_t reg, uint8_t value);
-
-uint8_t readRegister8(uint8_t reg);
-
-void bitMask(uint8_t reg, uint8_t mask, uint8_t thing);
+// I2C_bitMask
+// Reads 8 bit register specified in reg
+// Masks the value of register with mask, then ors with thing
+void I2C_bitMask(uint32_t module, uint8_t reg, uint8_t mask, uint8_t thing);
 
 uint8_t I2C_getByte(uint32_t moduleInstance);
 

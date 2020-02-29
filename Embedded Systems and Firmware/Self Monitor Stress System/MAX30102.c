@@ -10,20 +10,22 @@
 #include "MAX30102.h"
 #include "driverlib/MSP432P4xx/driverlib.h"
 
+#define I2C_MODULE EUSCI_B0_BASE
+
 sense_struct sense;
 
 static uint8_t activeLEDs = 0;
 
 
 void softReset(void){
-    bitMask(MAX30105_MODECONFIG, MAX30105_RESET_MASK, MAX30105_RESET);
+    I2C_bitMask(I2C_MODULE, MAX30105_MODECONFIG, MAX30105_RESET_MASK, MAX30105_RESET);
 
     // Poll for bit to clear, reset is then complete
     // Timeout after 100ms
     unsigned long startTime = 0;
     while (startTime < 100)
     {
-      uint8_t response = readRegister8(MAX30105_MODECONFIG);
+      uint8_t response = I2C_readRegister(I2C_MODULE, MAX30105_MODECONFIG);
       if ((response & MAX30105_RESET) == 0) break; //We're done!
       __delay_cycles(3000); //Let's not over burden the I2C bus
       startTime++;
@@ -31,50 +33,50 @@ void softReset(void){
 }
 
 void setLEDMode(uint8_t ledMode){
-    bitMask(MAX30105_MODECONFIG, MAX30105_MODE_MASK, ledMode);
+    I2C_bitMask(I2C_MODULE, MAX30105_MODECONFIG, MAX30105_MODE_MASK, ledMode);
 }
 
 void setADCRange(int adcRange){
-    bitMask(MAX30105_PARTICLECONFIG, MAX30105_ADCRANGE_MASK, adcRange);
+    I2C_bitMask(I2C_MODULE, MAX30105_PARTICLECONFIG, MAX30105_ADCRANGE_MASK, adcRange);
 }
 
 void setSampleRate(uint8_t sampleRate){
-    bitMask(MAX30105_PARTICLECONFIG, MAX30105_SAMPLERATE_MASK, sampleRate);
+    I2C_bitMask(I2C_MODULE, MAX30105_PARTICLECONFIG, MAX30105_SAMPLERATE_MASK, sampleRate);
 }
 
 void setPulseWidth(int pulseWidth){
-    bitMask(MAX30105_PARTICLECONFIG, MAX30105_PULSEWIDTH_MASK, pulseWidth);
+    I2C_bitMask(I2C_MODULE, MAX30105_PARTICLECONFIG, MAX30105_PULSEWIDTH_MASK, pulseWidth);
 }
 
 void setPulseAmplitudeRed(uint8_t amplitude){
-    writeRegister8(MAX30105_LED1_PULSEAMP, amplitude);
+    I2C_writeRegister(I2C_MODULE, MAX30105_LED1_PULSEAMP, amplitude);
 }
 
 void setPulseAmplitudeIR(uint8_t amplitude){
-    writeRegister8(MAX30105_LED2_PULSEAMP, amplitude);
+    I2C_writeRegister(I2C_MODULE, MAX30105_LED2_PULSEAMP, amplitude);
 }
 
 void setPulseAmplitudeGreen(uint8_t amplitude){
-    writeRegister8(MAX30105_LED3_PULSEAMP, amplitude);
+    I2C_writeRegister(I2C_MODULE, MAX30105_LED3_PULSEAMP, amplitude);
 }
 
 void setPulseAmplitudeProximity(uint8_t amplitude){
-    writeRegister8(MAX30105_LED_PROX_AMP, amplitude);
+    I2C_writeRegister(I2C_MODULE, MAX30105_LED_PROX_AMP, amplitude);
 }
 
 void enableSlot(uint8_t slotNumber, uint8_t device){
     switch (slotNumber) {
       case (1):
-        bitMask(MAX30105_MULTILEDCONFIG1, MAX30105_SLOT1_MASK, device);
+        I2C_bitMask(I2C_MODULE, MAX30105_MULTILEDCONFIG1, MAX30105_SLOT1_MASK, device);
         break;
       case (2):
-        bitMask(MAX30105_MULTILEDCONFIG1, MAX30105_SLOT2_MASK, device << 4);
+        I2C_bitMask(I2C_MODULE, MAX30105_MULTILEDCONFIG1, MAX30105_SLOT2_MASK, device << 4);
         break;
       case (3):
-        bitMask(MAX30105_MULTILEDCONFIG2, MAX30105_SLOT3_MASK, device);
+        I2C_bitMask(I2C_MODULE, MAX30105_MULTILEDCONFIG2, MAX30105_SLOT3_MASK, device);
         break;
       case (4):
-        bitMask(MAX30105_MULTILEDCONFIG2, MAX30105_SLOT4_MASK, device << 4);
+        I2C_bitMask(I2C_MODULE, MAX30105_MULTILEDCONFIG2, MAX30105_SLOT4_MASK, device << 4);
         break;
       default:
         //Shouldn't be here!
@@ -83,34 +85,34 @@ void enableSlot(uint8_t slotNumber, uint8_t device){
 }
 
 void disableSlots(void){
-    writeRegister8(MAX30105_MULTILEDCONFIG1, 0);
-    writeRegister8(MAX30105_MULTILEDCONFIG2, 0);
+    I2C_writeRegister(I2C_MODULE, MAX30105_MULTILEDCONFIG1, 0);
+    I2C_writeRegister(I2C_MODULE, MAX30105_MULTILEDCONFIG2, 0);
 }
 
 void setFIFOAverage(uint8_t sampleAverage){
-    bitMask(MAX30105_FIFOCONFIG, MAX30105_SAMPLEAVG_MASK, sampleAverage);
+    I2C_bitMask(I2C_MODULE, MAX30105_FIFOCONFIG, MAX30105_SAMPLEAVG_MASK, sampleAverage);
 }
 
 void clearFIFO(void){
-    writeRegister8(MAX30105_FIFOWRITEPTR, 0);
-    writeRegister8(MAX30105_FIFOOVERFLOW, 0);
-    writeRegister8(MAX30105_FIFOREADPTR, 0);
+    I2C_writeRegister(I2C_MODULE, MAX30105_FIFOWRITEPTR, 0);
+    I2C_writeRegister(I2C_MODULE, MAX30105_FIFOOVERFLOW, 0);
+    I2C_writeRegister(I2C_MODULE, MAX30105_FIFOREADPTR, 0);
 }
 
 void enableFIFORollover(void){
-    bitMask(MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_ENABLE);
+    I2C_bitMask(I2C_MODULE, MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_ENABLE);
 }
 
 void disableFIFORollover(void){
-    bitMask(MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_DISABLE);
+    I2C_bitMask(I2C_MODULE, MAX30105_FIFOCONFIG, MAX30105_ROLLOVER_MASK, MAX30105_ROLLOVER_DISABLE);
 }
 
 uint8_t getWritePointer(void){
-    return (readRegister8(MAX30105_FIFOWRITEPTR));
+    return (I2C_readRegister(I2C_MODULE, MAX30105_FIFOWRITEPTR));
 }
 
 uint8_t getReadPointer(void){
-    return (readRegister8(MAX30105_FIFOREADPTR));
+    return (I2C_readRegister(I2C_MODULE, MAX30105_FIFOREADPTR));
 }
 
 // MAX30102_setup
