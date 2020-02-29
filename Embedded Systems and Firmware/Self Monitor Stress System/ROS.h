@@ -9,14 +9,28 @@
 #define ROS_H_
 #include <stdint.h>
 
-void ROS_Init(void);
+// ROS_init
+// Initialize I2C port for ROS communication
+void ROS_init(void);
 
-int8_t ROS_Read_IR(void);
+// ROS_read_ir
+// returns the raw infrared values from MAX30102
+int8_t ROS_read_ir(void);
 
-int8_t ROS_Read_Heartrate(void);
+// ROS_read_spo2
+// return spo2 calculated value
+// return 0 if spo2 is not valid
+int8_t ROS_read_spo2(void);
 
-int8_t ROS_Read_SpO2(void);
+// ROS_read_heart_rate
+// return heart_rate calculated value
+// return 0 if heart rate is not valid
+int8_t ROS_read_heart_rate(void);
 
-void ROS_Calculate(void);
+// ROS_calculate
+// collects 100 samples from MAX30102
+// performs heart rate and spo2 calculation
+// sets heart_rate valid and spo2_valid
+void ROS_calculate(void);
 
 #endif /* ROS_H_ */

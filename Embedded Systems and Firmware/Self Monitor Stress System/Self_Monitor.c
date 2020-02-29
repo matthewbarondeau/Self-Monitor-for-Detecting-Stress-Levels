@@ -13,11 +13,12 @@
 #include "ROS.h"
 #include "Accelerometer.h"
 
-#define DEBUG0  // UART0 Debugging
+//#define DEBUG0  // UART0 Debugging
 
 uint8_t Accelerometer = 0;
 uint8_t GSR = 0;
 uint8_t ROS = 0;
+uint32_t irValue = 0;
 
 void readAccelerometer(){
     #ifdef DEBUG0
@@ -53,9 +54,9 @@ void main(void){
     #endif
 
     // Initialize Sensors
-    ACC_Init();
-    GSR_Init();
-    ROS_Init();
+    // ACC_Init();
+    // GSR_Init();
+    ROS_init();
 
     // Initialize Bluetooth
     int r = AP_Init();
@@ -64,13 +65,13 @@ void main(void){
     AP_AddService(0x00FF);
 
     // Add Notify Characteristics for Heart Rate from GMR
-    AP_AddNotifyCharacteristic(0xFFF1, 1, &Accelerometer, "Accelerometer", &readAccelerometer);
+    //AP_AddNotifyCharacteristic(0xFFF1, 1, &Accelerometer, "Accelerometer", &readAccelerometer);
 
     // Add Notify Characteristic for GSR
-    AP_AddNotifyCharacteristic(0xFFF2, 1, &GSR, "GSR", &readGSR);
+    //AP_AddNotifyCharacteristic(0xFFF2, 1, &GSR, "GSR", &readGSR);
 
     // Add Notify Characteristic for ROS
-    AP_AddNotifyCharacteristic(0xFFF3, 1, &ROS, "ROS", &readROS);
+    AP_AddNotifyCharacteristic(0xFFF3, 4, &irValue, "irValue", &readROS);
 
     // Start Broadcasting Bluetooth
     AP_RegisterService();
@@ -83,26 +84,26 @@ void main(void){
         AP_BackgroundProcess();
         time++;
 
-        if(time > 2000000){
+        if(time > 10000){
             time = 0;
 
             // Read new value of Heartbeat
             // Send to Mobile Application
-            Accelerometer = ACC_Read_Data();
-            if(AP_GetNotifyCCCD(0)){
-                AP_SendNotification(0);
-            }
+            //Accelerometer = ACC_Read_Data();
+            //if(AP_GetNotifyCCCD(0)){
+            //    AP_SendNotification(0);
+            //}
 
             // Read new value of GSR
             // Send to Mobile Application
-            GSR = GSR_Read_Data();
-            if(AP_GetNotifyCCCD(1)){
-                AP_SendNotification(1);
-            }
+            //GSR = GSR_Read_Data();
+            //if(AP_GetNotifyCCCD(1)){
+            //    AP_SendNotification(1);
+            //}
 
             // Read new value of ROS
             // Send to Mobile Application
-            ROS = ROS_Read_IR();
+            irValue = ROS_read_ir();
             if(AP_GetNotifyCCCD(2)){
                 AP_SendNotification(2);
             }

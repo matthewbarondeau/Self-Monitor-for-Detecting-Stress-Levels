@@ -8,32 +8,23 @@
 #ifndef MAX30102_H_
 #define MAX30102_H_
 
-
-void setPulseAmplitudeRed(uint8_t amplitude);
+/* Slave Address for I2C Slave */
+#define MAX30102_ADDRESS       0x57
 
 int MAX30102_Init(void);
 
 uint8_t MAX30102_available(void);
 
-uint32_t MAX30102_getIR(void);
-
-uint32_t MAX30102_getRed(void);
-
 uint32_t MAX30102_getFIFORed(void);
 
 uint32_t MAX30102_getFIFOIR(void);
-
-uint32_t MAX30102_getFIFOGreen(void);
 
 void MAX30102_nextSample(void);
 
 uint16_t MAX30102_checkDevice(void);
 
-uint16_t MAX30102_check(void);
 
-bool MAX30102_safeCheck(uint8_t maxTimeToCheck);
-
-#define STORAGE_SIZE 1
+#define STORAGE_SIZE 4
 typedef struct Record
 {
   uint32_t red[STORAGE_SIZE];
