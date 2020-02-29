@@ -12,106 +12,6 @@
 
 sense_struct sense;
 
-// Status Registers
-static const uint8_t MAX30105_INTSTAT1 =        0x00;
-static const uint8_t MAX30105_INTSTAT2 =        0x01;
-static const uint8_t MAX30105_INTENABLE1 =      0x02;
-static const uint8_t MAX30105_INTENABLE2 =      0x03;
-
-// FIFO Registers
-static const uint8_t MAX30105_FIFOWRITEPTR =    0x04;
-static const uint8_t MAX30105_FIFOOVERFLOW =    0x05;
-static const uint8_t MAX30105_FIFOREADPTR =     0x06;
-static const uint8_t MAX30105_FIFODATA =        0x07;
-
-// Configuration Registers
-static const uint8_t MAX30105_FIFOCONFIG =      0x08;
-static const uint8_t MAX30105_MODECONFIG =      0x09;
-static const uint8_t MAX30105_PARTICLECONFIG =  0x0A;    // Note, sometimes listed as "SPO2" config in datasheet (pg. 11)
-static const uint8_t MAX30105_LED1_PULSEAMP =   0x0C;
-static const uint8_t MAX30105_LED2_PULSEAMP =   0x0D;
-static const uint8_t MAX30105_LED3_PULSEAMP =   0x0E;
-static const uint8_t MAX30105_LED_PROX_AMP =    0x10;
-static const uint8_t MAX30105_MULTILEDCONFIG1 = 0x11;
-static const uint8_t MAX30105_MULTILEDCONFIG2 = 0x12;
-
-// Die Temperature Registers
-static const uint8_t MAX30105_DIETEMPINT =      0x1F;
-static const uint8_t MAX30105_DIETEMPFRAC =     0x20;
-static const uint8_t MAX30105_DIETEMPCONFIG =   0x21;
-
-// Proximity Function Registers
-static const uint8_t MAX30105_PROXINTTHRESH =   0x30;
-
-// Part ID Registers
-static const uint8_t MAX30105_REVISIONID =      0xFE;
-static const uint8_t MAX30105_PARTID =          0xFF;    // Should always be 0x15. Identical to MAX30102.
-
-// MAX30105 Commands
-
-static const uint8_t MAX30105_SAMPLEAVG_MASK =  (uint8_t)~0b11100000;
-static const uint8_t MAX30105_SAMPLEAVG_1 =     0x00;
-static const uint8_t MAX30105_SAMPLEAVG_2 =     0x20;
-static const uint8_t MAX30105_SAMPLEAVG_4 =     0x40;
-static const uint8_t MAX30105_SAMPLEAVG_8 =     0x60;
-static const uint8_t MAX30105_SAMPLEAVG_16 =    0x80;
-static const uint8_t MAX30105_SAMPLEAVG_32 =    0xA0;
-
-static const uint8_t MAX30105_ROLLOVER_MASK =   0xEF;
-static const uint8_t MAX30105_ROLLOVER_ENABLE = 0x10;
-static const uint8_t MAX30105_ROLLOVER_DISABLE = 0x00;
-
-static const uint8_t MAX30105_A_FULL_MASK =     0xF0;
-
-// Mode configuration commands (page 19)
-static const uint8_t MAX30105_SHUTDOWN_MASK =   0x7F;
-static const uint8_t MAX30105_SHUTDOWN =        0x80;
-static const uint8_t MAX30105_WAKEUP =          0x00;
-
-static const uint8_t MAX30105_RESET_MASK =      0xBF;
-static const uint8_t MAX30105_RESET =           0x40;
-
-static const uint8_t MAX30105_MODE_MASK =       0xF8;
-static const uint8_t MAX30105_MODE_REDONLY =    0x02;
-static const uint8_t MAX30105_MODE_REDIRONLY =  0x03;
-static const uint8_t MAX30105_MODE_MULTILED =   0x07;
-
-// Particle sensing configuration commands (pgs 19-20)
-static const uint8_t MAX30105_ADCRANGE_MASK =   0x9F;
-static const uint8_t MAX30105_ADCRANGE_2048 =   0x00;
-static const uint8_t MAX30105_ADCRANGE_4096 =   0x20;
-static const uint8_t MAX30105_ADCRANGE_8192 =   0x40;
-static const uint8_t MAX30105_ADCRANGE_16384 =  0x60;
-
-static const uint8_t MAX30105_SAMPLERATE_MASK = 0xE3;
-static const uint8_t MAX30105_SAMPLERATE_50 =   0x00;
-static const uint8_t MAX30105_SAMPLERATE_100 =  0x04;
-static const uint8_t MAX30105_SAMPLERATE_200 =  0x08;
-static const uint8_t MAX30105_SAMPLERATE_400 =  0x0C;
-static const uint8_t MAX30105_SAMPLERATE_800 =  0x10;
-static const uint8_t MAX30105_SAMPLERATE_1000 = 0x14;
-static const uint8_t MAX30105_SAMPLERATE_1600 = 0x18;
-static const uint8_t MAX30105_SAMPLERATE_3200 = 0x1C;
-
-static const uint8_t MAX30105_PULSEWIDTH_MASK = 0xFC;
-static const uint8_t MAX30105_PULSEWIDTH_69 =   0x00;
-static const uint8_t MAX30105_PULSEWIDTH_118 =  0x01;
-static const uint8_t MAX30105_PULSEWIDTH_215 =  0x02;
-static const uint8_t MAX30105_PULSEWIDTH_411 =  0x03;
-
-//Multi-LED Mode configuration (pg 22)
-static const uint8_t MAX30105_SLOT1_MASK =      0xF8;
-static const uint8_t MAX30105_SLOT2_MASK =      0x8F;
-static const uint8_t MAX30105_SLOT3_MASK =      0xF8;
-static const uint8_t MAX30105_SLOT4_MASK =      0x8F;
-
-static const uint8_t SLOT_NONE =                0x00;
-static const uint8_t SLOT_RED_LED =             0x01;
-static const uint8_t SLOT_IR_LED =              0x02;
-static const uint8_t SLOT_GREEN_LED =           0x03;
-
-static const uint8_t MAX_30105_EXPECTEDPARTID = 0x15;
-
 static uint8_t activeLEDs = 0;
 
 
@@ -125,7 +25,7 @@ void softReset(void){
     {
       uint8_t response = readRegister8(MAX30105_MODECONFIG);
       if ((response & MAX30105_RESET) == 0) break; //We're done!
-      __delay_cycles(48000); //Let's not over burden the I2C bus
+      __delay_cycles(3000); //Let's not over burden the I2C bus
       startTime++;
     }
 }
@@ -187,10 +87,6 @@ void disableSlots(void){
     writeRegister8(MAX30105_MULTILEDCONFIG2, 0);
 }
 
-/*
- * FIFO Configurations
- */
-
 void setFIFOAverage(uint8_t sampleAverage){
     bitMask(MAX30105_FIFOCONFIG, MAX30105_SAMPLEAVG_MASK, sampleAverage);
 }
@@ -217,11 +113,9 @@ uint8_t getReadPointer(void){
     return (readRegister8(MAX30105_FIFOREADPTR));
 }
 
-/*
- * Setup Routines
- */
-
-void MAX30102_Setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
+// MAX30102_setup
+// calls all initialization routines for MAX30102
+void MAX30102_setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
                     uint8_t sampleRate, int pulseWidth, int adcRange){
 
     softReset(); //Reset all configuration, threshold, and data registers to POR values
@@ -304,7 +198,9 @@ void MAX30102_Setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
     clearFIFO(); //Reset the FIFO before we begin checking the sensor
 }
 
-int MAX30102_Init(void){
+// MAX30102_init
+// Calls setup
+int MAX30102_init(void){
     // Setup I2C at 400kHz
     // call setup with configuration options
 
@@ -334,15 +230,13 @@ int MAX30102_Init(void){
     // Options of 2048, 4096, 8192, 16384
     int adcRange = 4096;
 
-    MAX30102_Setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
+    MAX30102_setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
 
     return 0;
 }
 
-/*
- * Data Collection
- */
-
+// MAX30102_available
+// determine how many samples are available
 uint8_t MAX30102_available(void){
     int8_t numberOfSamples = sense.head - sense.tail;
     if(numberOfSamples < 0){
@@ -351,21 +245,30 @@ uint8_t MAX30102_available(void){
     return(numberOfSamples);
 }
 
-uint32_t MAX30102_getFIFORed(void){
+// MAX30102_get_red
+// Returns next red led value
+uint32_t MAX30102_get_red(void){
     return sense.red[sense.tail];
 }
 
-uint32_t MAX30102_getFIFOIR(void){
+// MAX30102_get_ir
+// returns next ir led value
+uint32_t MAX30102_get_ir(void){
     return sense.IR[sense.tail];
 }
 
-void MAX30102_nextSample(void){
+// MAX30102_next_sample
+// updates tail pointers for sense
+void MAX30102_next_sample(void){
     if(MAX30102_available()){
         sense.tail++;
         sense.tail %= STORAGE_SIZE;
     }
 }
-uint16_t MAX30102_checkDevice(void){
+
+// MAX30102_check_device
+// gets new values from MAX30102 and stores values in sense
+uint16_t MAX30102_check_device(void){
 
     // Start
     // send address + write mode
@@ -375,10 +278,11 @@ uint16_t MAX30102_checkDevice(void){
     // repeated start
     I2C_masterReceiveStart(EUSCI_B1_BASE);
 
+    // update fifo pointer
     sense.head++;
     sense.head &= 3;
 
-    uint8_t temp[sizeof(uint32_t)];
+    uint8_t temp[4];
     uint32_t tempLong;
 
     temp[3] = 0;
@@ -401,7 +305,6 @@ uint16_t MAX30102_checkDevice(void){
         temp[2] = I2C_slaveGetData(EUSCI_B1_BASE);
         while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
         temp[1] = I2C_slaveGetData(EUSCI_B1_BASE);
-        //while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
         I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
         __delay_cycles(10000);
         while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));

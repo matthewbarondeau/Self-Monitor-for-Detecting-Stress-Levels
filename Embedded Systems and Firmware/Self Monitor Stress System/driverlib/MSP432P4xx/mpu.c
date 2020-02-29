@@ -36,7 +36,7 @@
  * --/COPYRIGHT--*/
 #include "debug.h"
 #include "interrupt.h"
-#include "mpu.h""
+#include "mpu.h"
 
 void MPU_enableModule(uint32_t mpuConfig)
 {

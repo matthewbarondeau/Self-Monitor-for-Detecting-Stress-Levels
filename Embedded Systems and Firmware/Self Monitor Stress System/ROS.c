@@ -55,7 +55,7 @@ void ROS_init(){
     MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
 
     // Call initialization function for MAX30102 device
-    MAX30102_Init();
+    MAX30102_init();
 }
 
 // ROS_read_ir
@@ -64,14 +64,14 @@ int32_t ROS_read_ir(){
     // Determines if there is already a sample
     // If there is not a sample, check device for new sample
     if(!MAX30102_available()){
-        MAX30102_checkDevice();
+        MAX30102_check_device();
     }
 
     // Get ir value from record data structure
-    ir = MAX30102_getFIFOIR();
+    ir = MAX30102_get_ir();
 
     // Update record fifo pointer
-    MAX30102_nextSample();
+    MAX30102_next_sample();
 
     return ir;
 }
@@ -112,15 +112,15 @@ void ROS_calculate(){
 
         // Check for new sensor data
         while(MAX30102_available() == 0){
-            MAX30102_checkDevice();
+            MAX30102_check_device();
         }
 
         // store new sensor data
-        redBuffer[i] = MAX30102_getFIFORed();
-        irBuffer[i] = MAX30102_getFIFOIR();
+        redBuffer[i] = MAX30102_get_red();
+        irBuffer[i] = MAX30102_get_ir();
 
         // update pointer to next sample
-        MAX30102_nextSample();
+        MAX30102_next_sample();
 
     }
 
