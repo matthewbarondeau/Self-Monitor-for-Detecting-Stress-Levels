@@ -6,13 +6,13 @@
  *  Changed on: Feb 29, 2020
  */
 
-#define I2CSLAVENUM 1
-
 #include "Accelerometer.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
 #include "driverlib/MSP432P4xx/driverlib.h"
+
+#define I2C_MODULE EUSCI_B1_BASE
 
 int16_t x;
 int16_t y;
@@ -38,19 +38,19 @@ void ACC_init(void){
              GPIO_PIN4 + GPIO_PIN5, GPIO_PRIMARY_MODULE_FUNCTION);
 
     // Pass configuration to I2C module
-    MAP_I2C_initMaster(EUSCI_B1_BASE, &ACCConfig);
+    MAP_I2C_initMaster(I2C_MODULE, &ACCConfig);
 
     // Set as transmit mode
-    MAP_I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
+    MAP_I2C_setMode(I2C_MODULE, EUSCI_B_I2C_TRANSMIT_MODE);
 
     // Set I2C Address
-    MAP_I2C_setSlaveAddress(EUSCI_B1_BASE, MMA8451_DEFAULT_ADDRESS);
+    MAP_I2C_setSlaveAddress(I2C_MODULE, MMA8451_DEFAULT_ADDRESS);
 
     // Enable I2C module
-    MAP_I2C_enableModule(EUSCI_B1_BASE);
+    MAP_I2C_enableModule(I2C_MODULE);
 
     // Polling not interrupt
-    MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
+    MAP_I2C_disableInterrupt(I2C_MODULE, 0xFFFF);
 
     // Check Connection
     uint8_t deviceid = readRegister8(MMA8451_REG_WHOAMI);
@@ -116,37 +116,37 @@ float ACC_get_z(void){
 // Calculates acceleration using 6 bytes
 void ACC_read_data(void){
     // Send out start and register
-    I2C_masterSendMultiByteStart(EUSCI_B1_BASE, MMA8451_REG_OUT_X_MSB);
+    I2C_masterSendMultiByteStart(I2C_MODULE, MMA8451_REG_OUT_X_MSB);
 
     // Wait for data to be sent
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
 
     // repeated start
-    I2C_masterReceiveStart(EUSCI_B1_BASE);
+    I2C_masterReceiveStart(I2C_MODULE);
 
-    x = I2C_getByte();
+    x = I2C_getByte(I2C_MODULE);
     x = x << 8;
-    x |= I2C_getByte();
+    x |= I2C_getByte(I2C_MODULE);
     x = x >> 2;
 
-    y = I2C_getByte();
+    y = I2C_getByte(I2C_MODULE);
     y = y << 8;
-    y |= I2C_getByte();
+    y |= I2C_getByte(I2C_MODULE);
     y = y >> 2;
 
-    z = I2C_getByte();
+    z = I2C_getByte(I2C_MODULE);
     z = z << 8;
 
     // Send Stop
-    I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
+    I2C_masterReceiveMultiByteStop(I2C_MODULE);
 
-    z |= I2C_getByte();
+    z |= I2C_getByte(I2C_MODULE);
     z = z >> 2;
 
     // Delay 1ms
     __delay_cycles(3000);
 
-    int q = I2C_slaveGetData(EUSCI_B1_BASE); // TODO: Test removal
+    int q = I2C_slaveGetData(I2C_MODULE); // TODO: Test removal
 
     xACC = ACC_calc(x);
     yACC = ACC_calc(y);

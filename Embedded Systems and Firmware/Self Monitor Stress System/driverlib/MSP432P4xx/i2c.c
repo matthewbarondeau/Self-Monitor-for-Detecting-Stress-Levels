@@ -85,10 +85,11 @@ void bitMask(uint8_t reg, uint8_t mask, uint8_t thing){
     writeRegister8(reg, value | thing);
 }
 
-uint8_t I2C_getByte(void){
+uint8_t I2C_getByte(uint32_t moduleInstance){
     // Wait until there is valid data in RXFIFO
-    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
-    return I2C_slaveGetData(EUSCI_B1_BASE);
+    while(!(EUSCI_B_CMSIS(moduleInstance)->IFG & EUSCI_B_IFG_RXIFG0));
+    // Return the value in RXFIFO
+    return I2C_slaveGetData(moduleInstance);
 }
 
 void I2C_initMaster(uint32_t moduleInstance, const eUSCI_I2C_MasterConfig *config)
