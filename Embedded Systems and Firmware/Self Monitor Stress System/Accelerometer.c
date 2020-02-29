@@ -3,6 +3,7 @@
  *
  *  Created on: Jan 19, 2020
  *      Author: Matthew Barondeau
+ *  Changed on: Feb 29, 2020
  */
 
 #define I2CSLAVENUM 1
@@ -13,43 +14,42 @@
 #include <string.h>
 #include "driverlib/MSP432P4xx/driverlib.h"
 
-/* Slave Address for I2C Slave */
-#define SLAVE_ADDRESS       0x1D
-#define NUM_OF_REC_BYTES    32
-
-/* Variables */
-const uint8_t TXData[] = {0x41,0x42};
-
 int16_t x;
 int16_t y;
 int16_t z;
+float xACC;
+float yACC;
+float zACC;
 
-/* I2C Master Configuration Parameter */
-// Baud rate selectable (100KBPS, 400KBPS)
-
-
-
-const eUSCI_I2C_MasterConfig i2cConfig =
+const eUSCI_I2C_MasterConfig ACCConfig =
 {
-        EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-        3000000,                                // SMCLK = 3MHz
-        EUSCI_B_I2C_SET_DATA_RATE_400KBPS,      // Desired I2C Clock of 100khz
-        0,                                      // No byte counter threshold
-        EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
+    EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
+    3000000,                                // SMCLK = 3MHz
+    EUSCI_B_I2C_SET_DATA_RATE_400KBPS,      // Desired I2C Clock of 100khz
+    0,                                      // No byte counter threshold
+    EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
 };
 
-void ACC_Init(void){
+// ACC_init
+// Configure MMA8451 on I2C EUSCI_B1
+void ACC_init(void){
+    // Configure I2C module
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
              GPIO_PIN4 + GPIO_PIN5, GPIO_PRIMARY_MODULE_FUNCTION);
 
-    MAP_I2C_initMaster(EUSCI_B1_BASE, &i2cConfig);
+    // Pass configuration to I2C module
+    MAP_I2C_initMaster(EUSCI_B1_BASE, &ACCConfig);
 
+    // Set as transmit mode
     MAP_I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
 
-    MAP_I2C_setSlaveAddress(EUSCI_B1_BASE, SLAVE_ADDRESS);
+    // Set I2C Address
+    MAP_I2C_setSlaveAddress(EUSCI_B1_BASE, MMA8451_DEFAULT_ADDRESS);
 
+    // Enable I2C module
     MAP_I2C_enableModule(EUSCI_B1_BASE);
 
+    // Polling not interrupt
     MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
 
     // Check Connection
@@ -83,71 +83,75 @@ void ACC_Init(void){
     x = 0;
     y = 0;
     z = 0;
-
-    ACC_Read_Data();
-    ACC_Read_Data();
-    ACC_Read_Data();
-    ACC_Read_Data();
 }
 
-float ACC_Acceleration_X(int16_t x){
-    float x_g = (float) x / 2048;
-    return 9.80665 * x_g;
+// ACC_calc
+// Calculates acceleration in the given direction
+// TODO: should be reconfigured to return int16
+float ACC_calc(int16_t value){
+    float value_g = (float) value / 2048;
+    return 9.80665 * value_g;
 }
 
-float ACC_Acceleration_Y(int16_t y){
-    float y_g = (float) y / 2048;
-    return 9.80665 * y_g;
+// ACC_get_x
+// returns x acceleration value
+float ACC_get_x(void){
+    return xACC;
 }
 
-float ACC_Acceleration_Z(int16_t z){
-    float z_g = (float) z / 2048;
-    return 9.80665 * z_g;
+// ACC_get_y
+// returns y acceleration value
+float ACC_get_y(void){
+    return yACC;
 }
 
-uint8_t ACC_Read_Data(void){
-    x = 0;
-    y = 0;
-    z = 0;
+// ACC_get_z
+// returns z acceleration value
+float ACC_get_z(void){
+    return zACC;
+}
 
+// ACC_read_data
+// Reads 6 bytes from MMA8451 using repeated start I2C
+// Calculates acceleration using 6 bytes
+void ACC_read_data(void){
+    // Send out start and register
     I2C_masterSendMultiByteStart(EUSCI_B1_BASE, MMA8451_REG_OUT_X_MSB);
+
+    // Wait for data to be sent
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
 
     // repeated start
     I2C_masterReceiveStart(EUSCI_B1_BASE);
 
-    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
-    x = I2C_slaveGetData(EUSCI_B1_BASE);
+    x = I2C_getByte();
     x = x << 8;
-    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
-    x |= I2C_slaveGetData(EUSCI_B1_BASE);
+    x |= I2C_getByte();
     x = x >> 2;
 
-    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
-    y = I2C_slaveGetData(EUSCI_B1_BASE);
+    y = I2C_getByte();
     y = y << 8;
-    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
-    y |= I2C_slaveGetData(EUSCI_B1_BASE);
+    y |= I2C_getByte();
     y = y >> 2;
 
-    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
-    z = I2C_slaveGetData(EUSCI_B1_BASE);
+    z = I2C_getByte();
     z = z << 8;
 
+    // Send Stop
     I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
-    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
-    z |= I2C_slaveGetData(EUSCI_B1_BASE);
-    z = z >> 2;
-    __delay_cycles(10000);  // need this here for correct values for some reason
-    int q = I2C_slaveGetData(EUSCI_B1_BASE);
-    //I2C_masterReceiveMultiByteStop(EUSCI_B1_BASE);
 
-    float xACC = ACC_Acceleration_X(x);
-    float yACC = ACC_Acceleration_Y(y);
-    float zACC = ACC_Acceleration_Z(z);
-    xACC += 0;
-    yACC += 0;
-    zACC += 0;
-    __delay_cycles(10000);
+    z |= I2C_getByte();
+    z = z >> 2;
+
+    // Delay 1ms
+    __delay_cycles(3000);
+
+    int q = I2C_slaveGetData(EUSCI_B1_BASE); // TODO: Test removal
+
+    xACC = ACC_calc(x);
+    yACC = ACC_calc(y);
+    zACC = ACC_calc(z);
+
+    __delay_cycles(3000); // TODO: Test removal
 }
 

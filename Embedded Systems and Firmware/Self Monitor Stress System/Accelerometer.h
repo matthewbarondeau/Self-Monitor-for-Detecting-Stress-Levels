@@ -3,6 +3,7 @@
  *
  *  Created on: Jan 19, 2020
  *      Author: Matthew Barondeau
+ *  Changed on: Feb 29, 2020
  */
 
 #ifndef ACCELEROMETER_H_
@@ -10,11 +11,7 @@
 
 #include <stdint.h>
 
-/*=========================================================================
-    I2C ADDRESS/BITS
-    -----------------------------------------------------------------------*/
-    #define MMA8451_DEFAULT_ADDRESS                 (0x1D)    // if A is GND, its 0x1C
-/*=========================================================================*/
+#define MMA8451_DEFAULT_ADDRESS                 (0x1D)
 
 #define MMA8451_REG_OUT_X_MSB     0x01
 #define MMA8451_REG_SYSMOD        0x0B
@@ -26,8 +23,6 @@
 #define MMA8451_REG_CTRL_REG2     0x2B
 #define MMA8451_REG_CTRL_REG4     0x2D
 #define MMA8451_REG_CTRL_REG5     0x2E
-
-
 
 #define MMA8451_PL_PUF            0
 #define MMA8451_PL_PUB            1
@@ -61,9 +56,25 @@ typedef enum
   MMA8451_DATARATE_MASK       = 0b111
 } mma8451_dataRate_t;
 
+// ACC_init
+// Configure MMA8451 on I2C EUSCI_B1
 void ACC_Init(void);
 
-uint8_t ACC_Read_Data(void);
+// ACC_read_data
+// Reads 6 bytes from MMA8451 using repeated start I2C
+// Calculates acceleration using 6 bytes
+void ACC_read_data(void);
 
+// ACC_get_x
+// returns x acceleration value
+float ACC_get_x(void);
+
+// ACC_get_y
+// returns y acceleration value
+float ACC_get_y(void);
+
+// ACC_get_z
+// returns z acceleration value
+float ACC_get_z(void);
 
 #endif /* ACCELEROMETER_H_ */
