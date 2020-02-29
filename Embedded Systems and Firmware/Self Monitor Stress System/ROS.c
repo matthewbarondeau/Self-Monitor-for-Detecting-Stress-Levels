@@ -14,11 +14,11 @@
 #include "MAX30102.h"
 
 // Allocate variables
-int32_t SpO2;
-int8_t SpO2_valid;
-int32_t heart_rate;
-int8_t heart_rate_valid;
-int32_t ir;
+static int32_t SpO2;
+static int8_t SpO2_valid;
+static int32_t heart_rate;
+static int8_t heart_rate_valid;
+static int32_t ir;
 
 /* I2C Master Configuration Parameter */
 const eUSCI_I2C_MasterConfig MAX30102Config =

@@ -58,7 +58,7 @@ typedef enum
 
 // ACC_init
 // Configure MMA8451 on I2C EUSCI_B1
-void ACC_Init(void);
+void ACC_init(void);
 
 // ACC_read_data
 // Reads 6 bytes from MMA8451 using repeated start I2C

@@ -4,79 +4,28 @@
 // Updated 11/24/2019
 
 #include "msp.h"
-#include "Drivers/Clock.h"
-#include "Drivers/LaunchPad.h"
 #include "Drivers/CortexM.h"
 #include "Drivers/AP.h"
-#include "Drivers/UART0.h"
 #include "GSR.h"
 #include "ROS.h"
 #include "Accelerometer.h"
+#include "BLE.h"
 
-//#define DEBUG0  // UART0 Debugging
-
-uint8_t Accelerometer = 0;
-uint8_t GSR = 0;
-uint8_t ROS = 0;
-uint32_t irValue = 0;
-
-void readAccelerometer(){
-    #ifdef DEBUG0
-    UART0_OutString("Sent updated heartbeat: ");
-    UART0_OutUDec(Accelerometer);
-    UART0_OutString("\n\r");
-    #endif
-}
-
-void readGSR(){
-    #ifdef DEBUG0
-    UART0_OutString("Sent updated GSR: ");
-    UART0_OutUDec(GSR);
-    UART0_OutString("\n\r");
-    #endif
-}
-
-void readROS(){
-    #ifdef DEBUG0
-    UART0_OutString("Sent updated ROS: ");
-    UART0_OutUDec(ROS);
-    UART0_OutString("\n\r");
-    #endif
-}
+volatile uint8_t spo2 = 0;
+volatile uint8_t heart_rate = 0;
+volatile uint16_t x = 0;
+volatile uint16_t y = 0;
+volatile uint16_t z = 0;
+volatile uint16_t GSR = 0;
 
 void main(void){
-	//Clock_Init48MHz();
-    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
-    LaunchPad_Init();
 
-    #ifdef DEBUG0
-    UART0_Init();
-    #endif
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
 
     // Initialize Sensors
-    // ACC_Init();
-    // GSR_Init();
+    ACC_init();
+    GSR_Init();
     ROS_init();
-
-    // Initialize Bluetooth
-    int r = AP_Init();
-    AP_GetStatus();
-    AP_GetVersion();
-    AP_AddService(0x00FF);
-
-    // Add Notify Characteristics for Heart Rate from GMR
-    //AP_AddNotifyCharacteristic(0xFFF1, 1, &Accelerometer, "Accelerometer", &readAccelerometer);
-
-    // Add Notify Characteristic for GSR
-    //AP_AddNotifyCharacteristic(0xFFF2, 1, &GSR, "GSR", &readGSR);
-
-    // Add Notify Characteristic for ROS
-    AP_AddNotifyCharacteristic(0xFFF3, 4, &irValue, "irValue", &readROS);
-
-    // Start Broadcasting Bluetooth
-    AP_RegisterService();
-    AP_StartAdvertisement();
-    AP_GetStatus();
 
     uint32_t time = 0;
 
@@ -84,29 +33,24 @@ void main(void){
         AP_BackgroundProcess();
         time++;
 
-        if(time > 10000){
+        if(time > 1000){
             time = 0;
 
-            // Read new value of Heartbeat
-            // Send to Mobile Application
-            //Accelerometer = ACC_Read_Data();
-            //if(AP_GetNotifyCCCD(0)){
-            //    AP_SendNotification(0);
-            //}
+            // Read new accelerometer values
+            ACC_read_data();
+            x = (uint16_t) ACC_get_x();
+            y = (uint16_t) ACC_get_y();
+            z = (uint16_t) ACC_get_z();
 
-            // Read new value of GSR
-            // Send to Mobile Application
-            //GSR = GSR_Read_Data();
-            //if(AP_GetNotifyCCCD(1)){
-            //    AP_SendNotification(1);
-            //}
+            // Read new GSR value
+            GSR = GSR_Read_Data();
 
-            // Read new value of ROS
-            // Send to Mobile Application
-            irValue = ROS_read_ir();
-            if(AP_GetNotifyCCCD(2)){
-                AP_SendNotification(2);
-            }
+            // Read new ROS values
+            ROS_calculate();
+            spo2 = ROS_read_spo2();
+            heart_rate = ROS_read_heart_rate();
+
+            BLE_update_app();
         }
     }
 }

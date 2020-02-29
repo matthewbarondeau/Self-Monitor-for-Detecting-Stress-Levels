@@ -14,12 +14,12 @@
 
 #define I2C_MODULE EUSCI_B1_BASE
 
-int16_t x;
-int16_t y;
-int16_t z;
-float xACC;
-float yACC;
-float zACC;
+static int16_t x;
+static int16_t y;
+static int16_t z;
+static float xACC;
+static float yACC;
+static float zACC;
 
 const eUSCI_I2C_MasterConfig ACCConfig =
 {

@@ -20,12 +20,12 @@ int8_t ROS_read_ir(void);
 // ROS_read_spo2
 // return spo2 calculated value
 // return 0 if spo2 is not valid
-int8_t ROS_read_spo2(void);
+uint8_t ROS_read_spo2(void);
 
 // ROS_read_heart_rate
 // return heart_rate calculated value
 // return 0 if heart rate is not valid
-int8_t ROS_read_heart_rate(void);
+uint8_t ROS_read_heart_rate(void);
 
 // ROS_calculate
 // collects 100 samples from MAX30102
