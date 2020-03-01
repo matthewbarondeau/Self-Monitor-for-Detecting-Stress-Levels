@@ -6,8 +6,8 @@
  *  Changed on: Feb 29, 2020
  */
 
-#ifndef ACCELEROMETER_H_
-#define ACCELEROMETER_H_
+#ifndef ACC_H_
+#define ACC_H_
 
 #include <stdint.h>
 
@@ -77,4 +77,4 @@ float ACC_get_y(void);
 // returns z acceleration value
 float ACC_get_z(void);
 
-#endif /* ACCELEROMETER_H_ */
+#endif /* ACC_H_ */

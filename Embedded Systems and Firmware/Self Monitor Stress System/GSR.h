@@ -11,7 +11,7 @@
 
 void GSR_Init(void);
 
-int8_t GSR_Read_Data(void);
+int16_t GSR_Read_Data(void);
 
 
 #endif /* GSR_H_ */

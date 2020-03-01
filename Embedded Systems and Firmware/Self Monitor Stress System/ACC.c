@@ -6,7 +6,7 @@
  *  Changed on: Feb 29, 2020
  */
 
-#include "Accelerometer.h"
+#include <ACC.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
