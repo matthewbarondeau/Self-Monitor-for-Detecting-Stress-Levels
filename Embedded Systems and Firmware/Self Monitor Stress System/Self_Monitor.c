@@ -30,7 +30,7 @@ void main(void){
     uint32_t time = 0;
 
     while(1){
-        AP_BackgroundProcess();
+        //AP_BackgroundProcess();
         time++;
 
         if(time > 1000){
@@ -50,7 +50,7 @@ void main(void){
             spo2 = ROS_read_spo2();
             heart_rate = ROS_read_heart_rate();
 
-            BLE_update_app();
+            //BLE_update_app();
         }
     }
 }

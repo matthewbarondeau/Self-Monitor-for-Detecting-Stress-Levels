@@ -39,52 +39,99 @@
 #include "debug.h"
 #include "hw_memmap.h"
 
-// I2C_writeRegister
-// Writes value to specified register
+//B0 originally
+// B1 now
 void I2C_writeRegister(uint32_t module, uint8_t reg, uint8_t value){
-    while(I2C_masterIsStartSent(module));
-    I2C_masterSendMultiByteStart(module, reg);  // Start + 1Byte
-    I2C_masterSendMultiByteNext(module, value);
-    while(!(EUSCI_B_CMSIS(module)->IFG & EUSCI_B_IFG_TXIFG0));
-    EUSCI_B_CMSIS(module)->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
-    while (I2C_masterIsStopSent(module));
+    while(I2C_masterIsStartSent(EUSCI_B1_BASE));
+    I2C_masterSendMultiByteStart(EUSCI_B1_BASE, reg);  // Start + 1Byte
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
+    I2C_masterSendMultiByteNext(EUSCI_B1_BASE, value);
+    //I2C_masterSendMultiByteNext(EUSCI_B0_BASE, value); // Poll for TXINT,Send 1Byte
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
+    EUSCI_B1->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
+    while (I2C_masterIsStopSent(EUSCI_B1_BASE));
 
 }
 
-// I2C_readRegister
-// Read 8 bit register from I2C peripheral
-// Uses repeated start to perform read
 uint8_t I2C_readRegister(uint32_t module, uint8_t reg){
-    // Send out start plus register to read
-    // Wait for data to send
-    I2C_masterSendMultiByteStart(module, reg);
-    while(!(EUSCI_B_CMSIS(module)->IFG & EUSCI_B_IFG_TXIFG0));
+    uint8_t RXData;
 
-    // Send the restart condition
-    // Wait for start to send the send stop
-    EUSCI_B_CMSIS(module)->CTLW0 &= ~(EUSCI_B_CTLW0_TR);
-    EUSCI_B_CMSIS(module)->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
-    while(I2C_masterIsStartSent(module));
-    EUSCI_B_CMSIS(module)->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
+    //while (I2C_masterIsStopSent(EUSCI_B0_BASE) == EUSCI_B_I2C_SENDING_STOP);
 
-    // Return data
-    return I2C_getByte(module);
+    /* Send out EEPROM Mock Read Cmd (2 databytes) */
+    I2C_masterSendMultiByteStart(EUSCI_B1_BASE, reg);  // Start + 1Byte
+
+
+    //MAP_I2C_masterSendMultiByteFinish(EUSCI_B0_BASE, reg); // Poll for TXINT,Send 1Byte
+    /*---------------------------------------------*/
+    /* Now we need to initiate the read */
+    /* Wait until 2nd Byte has been output to shift register */
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
+
+    // Send the restart condition, read one byte, send the stop condition right away
+    EUSCI_B1->CTLW0 &= ~(EUSCI_B_CTLW0_TR);
+    EUSCI_B1->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
+
+    while(I2C_masterIsStartSent(EUSCI_B1_BASE));
+
+    EUSCI_B1->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
+
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
+    RXData = EUSCI_B1->RXBUF;
+
+    return RXData;
 }
 
-// I2C_bitMask
-// Reads 8 bit register specified in reg
-// Masks the value of register with mask, then ors with thing
+void I2C_writeRegister2(uint32_t module, uint8_t reg, uint8_t value){
+    while(I2C_masterIsStartSent(EUSCI_B2_BASE));
+    I2C_masterSendMultiByteStart(EUSCI_B2_BASE, reg);  // Start + 1Byte
+    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_TXIFG0));
+    I2C_masterSendMultiByteNext(EUSCI_B2_BASE, value);
+    //I2C_masterSendMultiByteNext(EUSCI_B0_BASE, value); // Poll for TXINT,Send 1Byte
+    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_TXIFG0));
+    EUSCI_B2->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
+    while (I2C_masterIsStopSent(EUSCI_B2_BASE));
+
+}
+
+uint8_t I2C_readRegister2(uint32_t module, uint8_t reg){
+    uint8_t RXData;
+
+    //while (I2C_masterIsStopSent(EUSCI_B0_BASE) == EUSCI_B_I2C_SENDING_STOP);
+
+    /* Send out EEPROM Mock Read Cmd (2 databytes) */
+    I2C_masterSendMultiByteStart(EUSCI_B2_BASE, reg);  // Start + 1Byte
+
+
+    //MAP_I2C_masterSendMultiByteFinish(EUSCI_B0_BASE, reg); // Poll for TXINT,Send 1Byte
+    /*---------------------------------------------*/
+    /* Now we need to initiate the read */
+    /* Wait until 2nd Byte has been output to shift register */
+    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_TXIFG0));
+
+    // Send the restart condition, read one byte, send the stop condition right away
+    EUSCI_B2->CTLW0 &= ~(EUSCI_B_CTLW0_TR);
+    EUSCI_B2->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
+
+    while(I2C_masterIsStartSent(EUSCI_B2_BASE));
+
+    EUSCI_B2->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
+
+    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_RXIFG0));
+    RXData = EUSCI_B2->RXBUF;
+
+    return RXData;
+}
+
 void I2C_bitMask(uint32_t module, uint8_t reg, uint8_t mask, uint8_t thing){
     uint8_t value = I2C_readRegister(module, reg);
     value = value & mask;
     I2C_writeRegister(module, reg, value | thing);
 }
 
-// I2C_getByte
-// reads
 uint8_t I2C_getByte(uint32_t moduleInstance){
     // Wait until there is valid data in RXFIFO
-    while(!(EUSCI_B_CMSIS(moduleInstance)->IFG & EUSCI_B_IFG_RXIFG0));
+    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_RXIFG0));
     // Return the value in RXFIFO
     return I2C_slaveGetData(moduleInstance);
 }
