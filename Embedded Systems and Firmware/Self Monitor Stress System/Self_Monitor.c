@@ -15,6 +15,8 @@ volatile int16_t x = 0;
 volatile int16_t y = 0;
 volatile int16_t z = 0;
 
+int beatAvg;
+
 void readheart_rate(){
 
 }
@@ -69,6 +71,7 @@ void main(void){
     // BLE_init();
 
     Clock_Init();
+    Timer32Init(6000); // 1ms period
 
     // Initialize Sensors
     ACC_init();
@@ -140,6 +143,9 @@ void main(void){
                 AP_SendNotification(3);
             }
         }
+
+
+
 
         time ++;
 
