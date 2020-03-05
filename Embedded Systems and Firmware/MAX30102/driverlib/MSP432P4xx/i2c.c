@@ -42,25 +42,24 @@
 //B0 originally
 // B1 now
 void writeRegister8(uint8_t reg, uint8_t value){
-    while(I2C_masterIsStartSent(EUSCI_B1_BASE));
+    __delay_cycles(12000);
+
     I2C_masterSendMultiByteStart(EUSCI_B1_BASE, reg);  // Start + 1Byte
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
     I2C_masterSendMultiByteNext(EUSCI_B1_BASE, value);
-    //I2C_masterSendMultiByteNext(EUSCI_B0_BASE, value); // Poll for TXINT,Send 1Byte
+
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
+
     EUSCI_B1->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
-    while (I2C_masterIsStopSent(EUSCI_B1_BASE));
+    __delay_cycles(12000);
 
 }
 
 uint8_t readRegister8(uint8_t reg){
     uint8_t RXData;
-
-    //while (I2C_masterIsStopSent(EUSCI_B0_BASE) == EUSCI_B_I2C_SENDING_STOP);
-
+    __delay_cycles(12000);
     /* Send out EEPROM Mock Read Cmd (2 databytes) */
     I2C_masterSendMultiByteStart(EUSCI_B1_BASE, reg);  // Start + 1Byte
-
 
     //MAP_I2C_masterSendMultiByteFinish(EUSCI_B0_BASE, reg); // Poll for TXINT,Send 1Byte
     /*---------------------------------------------*/
@@ -79,6 +78,7 @@ uint8_t readRegister8(uint8_t reg){
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
     RXData = EUSCI_B1->RXBUF;
 
+    __delay_cycles(12000);
     return RXData;
 }
 
