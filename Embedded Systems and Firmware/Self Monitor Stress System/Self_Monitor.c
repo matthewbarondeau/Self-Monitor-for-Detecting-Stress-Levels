@@ -9,10 +9,11 @@
 #include "GSR.h"
 #include "ROS.h"
 #include "ACC.h"
+#include "driverlib/MSP432P4xx/driverlib.h"
 
-volatile uint16_t x = 0;
-volatile uint16_t y = 0;
-volatile uint16_t z = 0;
+volatile int16_t x = 0;
+volatile int16_t y = 0;
+volatile int16_t z = 0;
 
 void readheart_rate(){
 
@@ -67,10 +68,12 @@ void main(void){
     // Initialize BLE
     // BLE_init();
 
+    Clock_Init();
+
     // Initialize Sensors
     ACC_init();
     GSR_Init();
-    ROS_init();
+   // ROS_init();
 
     int time = 0;
 
@@ -112,9 +115,9 @@ void main(void){
 
         if(time == 5000){
             ACC_read_data();
-            x = (int16_t) ACC_get_x();
-            y = (int16_t) ACC_get_y();
-
+            x = ACC_get_x();
+            y = ACC_get_y();
+            z = ACC_get_z();
             ACC_data = x << 16;
             ACC_data |= 0x0000FFFF & y;
             if(AP_GetNotifyCCCD(1)){
@@ -123,8 +126,8 @@ void main(void){
         }
 
         if(time == 7500){
-            ROS_calculate();
-            heart_rate = ROS_read_heart_rate();
+            //ROS_calculate();
+            //heart_rate = ROS_read_heart_rate();
             if(AP_GetNotifyCCCD(2)){
                 AP_SendNotification(2);
             }
@@ -132,7 +135,7 @@ void main(void){
 
         if(time == 10000){
             time = 0;
-            spo2 = ROS_read_spo2();
+            //spo2 = ROS_read_spo2();
             if(AP_GetNotifyCCCD(3)){
                 AP_SendNotification(3);
             }
