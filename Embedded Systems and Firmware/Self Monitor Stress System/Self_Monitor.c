@@ -38,6 +38,28 @@ void readGSR(){
 
 }
 
+void Clock_Init(){
+    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
+                GPIO_PIN3 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
+
+    /* Just in case the user wants to use the getACLK, getMCLK, etc. functions,
+     * let's set the clock frequency in the code.
+     */
+    CS_setExternalClockSourceFrequency(32000,48000000);
+
+    /* Starting HFXT in non-bypass mode without a timeout. Before we start
+     * we have to change VCORE to 1 to support the 48MHz frequency */
+    MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
+    MAP_FlashCtl_setWaitState(FLASH_BANK0, 1);
+    MAP_FlashCtl_setWaitState(FLASH_BANK1, 1);
+    CS_startHFXT(false);
+
+    /* Initializing MCLK to HFXT (effectively 48MHz) */
+    MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_8);
+    MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_8);
+}
+
 void main(void){
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
