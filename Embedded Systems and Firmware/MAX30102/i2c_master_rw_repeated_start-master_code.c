@@ -58,6 +58,8 @@ void ROS_Init(){
     smclk = CS_getSMCLK();
     mclk = CS_getMCLK();
 
+    UART0_Init();
+
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
             GPIO_PIN4 + GPIO_PIN5, GPIO_PRIMARY_MODULE_FUNCTION);
 
@@ -80,7 +82,7 @@ void ROS_Init(){
         while(1){};
     }
 
-    MAX30102_Init();
+    MAX30102_init();
 
 }
 
@@ -90,30 +92,12 @@ int main(void)
 
     long irValue;
     while(1){
-        irValue = MAX30102_getIR();
-        MAX30102_nextSample();
+        MAX30102_check_device();
+        irValue = MAX30102_get_ir();
+        MAX30102_next_sample();
         UART0_OutString("IrValue: ");
         UART0_OutUDec(irValue);
         UART0_OutString("\n\r");
     }
-
-}
-
-
-
-int32_t ROS_Read_IR(){
-    int32_t irValue = MAX30102_getIR();
-    MAX30102_nextSample();
-}
-
-uint8_t ROS_Read_SpO2(){
-
-}
-
-uint8_t ROS_Read_Heartrate(){
-
-}
-
-uint8_t ROS_calcuulate_SpO2(){
 
 }

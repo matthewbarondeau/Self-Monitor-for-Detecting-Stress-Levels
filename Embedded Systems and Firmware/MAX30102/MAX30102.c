@@ -9,12 +9,10 @@
 #include <stdbool.h>
 #include "MAX30102.h"
 #include "driverlib/MSP432P4xx/driverlib.h"
-#include "Timer32.h"
 
 sense_struct sense;
 
 static uint8_t activeLEDs = 0;
-
 
 void softReset(void){
     bitMask(MAX30105_MODECONFIG, MAX30105_RESET_MASK, MAX30105_RESET);
@@ -122,7 +120,7 @@ uint8_t getReadPointer(void){
  * Setup Routines
  */
 
-void MAX30102_Setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
+void MAX30102_setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
                     uint8_t sampleRate, int pulseWidth, int adcRange){
 
     softReset(); //Reset all configuration, threshold, and data registers to POR values
@@ -205,7 +203,7 @@ void MAX30102_Setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode,
     clearFIFO(); //Reset the FIFO before we begin checking the sensor
 }
 
-int MAX30102_Init(void){
+int MAX30102_init(void){
     // Setup I2C at 400kHz
     // call setup with configuration options
 
@@ -235,7 +233,7 @@ int MAX30102_Init(void){
     // Options of 2048, 4096, 8192, 16384
     int adcRange = 4096;
 
-    MAX30102_Setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
+    MAX30102_setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
 
     return 0;
 }
@@ -252,32 +250,22 @@ uint8_t MAX30102_available(void){
     return(numberOfSamples);
 }
 
-uint32_t MAX30102_getIR(void){
-    if(MAX30102_checkDevice()){
-        return sense.IR[sense.head];
-    } else{
-        return 0;
-    }
-}
-uint32_t MAX30102_getFIFORed(void){
-    return sense.red[sense.tail];
+uint32_t MAX30102_get_ir(void){
+    return sense.IR[sense.head];
 }
 
-uint32_t MAX30102_getFIFOIR(void){
-    return sense.IR[sense.tail];
+uint32_t MAX30102_get_red(void){
+    return sense.red[sense.head];
 }
 
-uint32_t MAX30102_getFIFOGreen(void){
-    return sense.green[sense.tail];
-}
 
-void MAX30102_nextSample(void){
+void MAX30102_next_sample(void){
     if(MAX30102_available()){
         sense.tail++;
         sense.tail %= STORAGE_SIZE;
     }
 }
-uint16_t MAX30102_checkDevice(void){
+uint16_t MAX30102_check_device(void){
 
     // Start
     // send address + write mode

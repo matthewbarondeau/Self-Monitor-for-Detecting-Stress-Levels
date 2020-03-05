@@ -80,27 +80,19 @@
 
 void setPulseAmplitudeRed(uint8_t amplitude);
 
-int MAX30102_Init(void);
+int MAX30102_init(void);
 
 uint8_t MAX30102_available(void);
 
-uint32_t MAX30102_getIR(void);
+uint32_t MAX30102_get_ir(void);
 
-uint32_t MAX30102_getFIFORed(void);
+uint32_t MAX30102_get_red(void);
 
-uint32_t MAX30102_getFIFOIR(void);
+void MAX30102_next_sample(void);
 
-uint32_t MAX30102_getFIFOGreen(void);
+uint16_t MAX30102_check_device(void);
 
-void MAX30102_nextSample(void);
-
-uint16_t MAX30102_checkDevice(void);
-
-uint16_t MAX30102_check(void);
-
-bool MAX30102_safeCheck(uint8_t maxTimeToCheck);
-
-#define STORAGE_SIZE 4
+#define STORAGE_SIZE 32
 typedef struct Record
 {
   uint32_t red[STORAGE_SIZE];
