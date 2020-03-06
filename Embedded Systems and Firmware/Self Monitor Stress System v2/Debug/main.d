@@ -20,6 +20,7 @@ main.obj: C:/ti/ccs930/ccs/ccs_base/arm/include/system_msp432p401r.h
 main.obj: ../Drivers/Clock.h
 main.obj: ../Drivers/AP.h
 main.obj: ../GSR.h
+main.obj: ../ACC.h
 
 ../main.c: 
 C:/ti/ccs930/ccs/ccs_base/arm/include/msp.h: 
@@ -41,3 +42,4 @@ C:/ti/ccs930/ccs/ccs_base/arm/include/system_msp432p401r.h:
 ../Drivers/Clock.h: 
 ../Drivers/AP.h: 
 ../GSR.h: 
+../ACC.h: 

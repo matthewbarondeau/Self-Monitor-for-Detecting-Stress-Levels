@@ -10,6 +10,7 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./ACC.obj" \
 "./BLE.obj" \
 "./GSR.obj" \
 "./main.obj" \
@@ -24,6 +25,32 @@ ORDERED_OBJS += \
 "./Drivers/UART0.obj" \
 "./Drivers/UART1.obj" \
 "./Drivers/adc.obj" \
+"./driverlib/MSP432P4xx/adc14.obj" \
+"./driverlib/MSP432P4xx/aes256.obj" \
+"./driverlib/MSP432P4xx/comp_e.obj" \
+"./driverlib/MSP432P4xx/cpu.obj" \
+"./driverlib/MSP432P4xx/crc32.obj" \
+"./driverlib/MSP432P4xx/cs.obj" \
+"./driverlib/MSP432P4xx/dma.obj" \
+"./driverlib/MSP432P4xx/flash.obj" \
+"./driverlib/MSP432P4xx/fpu.obj" \
+"./driverlib/MSP432P4xx/gpio.obj" \
+"./driverlib/MSP432P4xx/i2c.obj" \
+"./driverlib/MSP432P4xx/interrupt.obj" \
+"./driverlib/MSP432P4xx/mpu.obj" \
+"./driverlib/MSP432P4xx/pcm.obj" \
+"./driverlib/MSP432P4xx/pmap.obj" \
+"./driverlib/MSP432P4xx/pss.obj" \
+"./driverlib/MSP432P4xx/ref_a.obj" \
+"./driverlib/MSP432P4xx/reset.obj" \
+"./driverlib/MSP432P4xx/rtc_c.obj" \
+"./driverlib/MSP432P4xx/spi.obj" \
+"./driverlib/MSP432P4xx/sysctl.obj" \
+"./driverlib/MSP432P4xx/systick.obj" \
+"./driverlib/MSP432P4xx/timer32.obj" \
+"./driverlib/MSP432P4xx/timer_a.obj" \
+"./driverlib/MSP432P4xx/uart.obj" \
+"./driverlib/MSP432P4xx/wdt_a.obj" \
 "../msp432p401r.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
@@ -37,8 +64,10 @@ RMDIR := RMDIR /S/Q
 -include sources.mk
 -include subdir_vars.mk
 -include Drivers/subdir_vars.mk
+-include driverlib/MSP432P4xx/subdir_vars.mk
 -include subdir_rules.mk
 -include Drivers/subdir_rules.mk
+-include driverlib/MSP432P4xx/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -169,8 +198,10 @@ Self\ Monitor\ Stress\ System\ v2.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "BLE.obj" "GSR.obj" "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "Drivers\AP.obj" "Drivers\Clock.obj" "Drivers\CortexM.obj" "Drivers\GPIO.obj" "Drivers\LaunchPad.obj" "Drivers\Timer32.obj" "Drivers\UART0.obj" "Drivers\UART1.obj" "Drivers\adc.obj" 
-	-$(RM) "BLE.d" "GSR.d" "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "Drivers\AP.d" "Drivers\Clock.d" "Drivers\CortexM.d" "Drivers\GPIO.d" "Drivers\LaunchPad.d" "Drivers\Timer32.d" "Drivers\UART0.d" "Drivers\UART1.d" "Drivers\adc.d" 
+	-$(RM) "ACC.obj" "BLE.obj" "GSR.obj" "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "Drivers\AP.obj" "Drivers\Clock.obj" "Drivers\CortexM.obj" "Drivers\GPIO.obj" "Drivers\LaunchPad.obj" "Drivers\Timer32.obj" "Drivers\UART0.obj" "Drivers\UART1.obj" "Drivers\adc.obj" "driverlib\MSP432P4xx\adc14.obj" "driverlib\MSP432P4xx\aes256.obj" "driverlib\MSP432P4xx\comp_e.obj" "driverlib\MSP432P4xx\cpu.obj" "driverlib\MSP432P4xx\crc32.obj" "driverlib\MSP432P4xx\cs.obj" "driverlib\MSP432P4xx\dma.obj" "driverlib\MSP432P4xx\flash.obj" "driverlib\MSP432P4xx\fpu.obj" "driverlib\MSP432P4xx\gpio.obj" "driverlib\MSP432P4xx\i2c.obj" "driverlib\MSP432P4xx\interrupt.obj" "driverlib\MSP432P4xx\mpu.obj" "driverlib\MSP432P4xx\pcm.obj" "driverlib\MSP432P4xx\pmap.obj" "driverlib\MSP432P4xx\pss.obj" "driverlib\MSP432P4xx\ref_a.obj" "driverlib\MSP432P4xx\reset.obj" "driverlib\MSP432P4xx\rtc_c.obj" "driverlib\MSP432P4xx\spi.obj" "driverlib\MSP432P4xx\sysctl.obj" "driverlib\MSP432P4xx\systick.obj" "driverlib\MSP432P4xx\timer32.obj" 
+	-$(RM) "driverlib\MSP432P4xx\timer_a.obj" "driverlib\MSP432P4xx\uart.obj" "driverlib\MSP432P4xx\wdt_a.obj" 
+	-$(RM) "ACC.d" "BLE.d" "GSR.d" "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "Drivers\AP.d" "Drivers\Clock.d" "Drivers\CortexM.d" "Drivers\GPIO.d" "Drivers\LaunchPad.d" "Drivers\Timer32.d" "Drivers\UART0.d" "Drivers\UART1.d" "Drivers\adc.d" "driverlib\MSP432P4xx\adc14.d" "driverlib\MSP432P4xx\aes256.d" "driverlib\MSP432P4xx\comp_e.d" "driverlib\MSP432P4xx\cpu.d" "driverlib\MSP432P4xx\crc32.d" "driverlib\MSP432P4xx\cs.d" "driverlib\MSP432P4xx\dma.d" "driverlib\MSP432P4xx\flash.d" "driverlib\MSP432P4xx\fpu.d" "driverlib\MSP432P4xx\gpio.d" "driverlib\MSP432P4xx\i2c.d" "driverlib\MSP432P4xx\interrupt.d" "driverlib\MSP432P4xx\mpu.d" "driverlib\MSP432P4xx\pcm.d" "driverlib\MSP432P4xx\pmap.d" "driverlib\MSP432P4xx\pss.d" "driverlib\MSP432P4xx\ref_a.d" "driverlib\MSP432P4xx\reset.d" "driverlib\MSP432P4xx\rtc_c.d" "driverlib\MSP432P4xx\spi.d" "driverlib\MSP432P4xx\sysctl.d" "driverlib\MSP432P4xx\systick.d" "driverlib\MSP432P4xx\timer32.d" "driverlib\MSP432P4xx\timer_a.d" "driverlib\MSP432P4xx\uart.d" 
+	-$(RM) "driverlib\MSP432P4xx\wdt_a.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -9,6 +9,7 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
+../ACC.c \
 ../BLE.c \
 ../GSR.c \
 ../main.c \
@@ -16,6 +17,7 @@ C_SRCS += \
 ../system_msp432p401r.c 
 
 C_DEPS += \
+./ACC.d \
 ./BLE.d \
 ./GSR.d \
 ./main.d \
@@ -23,6 +25,7 @@ C_DEPS += \
 ./system_msp432p401r.d 
 
 OBJS += \
+./ACC.obj \
 ./BLE.obj \
 ./GSR.obj \
 ./main.obj \
@@ -30,6 +33,7 @@ OBJS += \
 ./system_msp432p401r.obj 
 
 OBJS__QUOTED += \
+"ACC.obj" \
 "BLE.obj" \
 "GSR.obj" \
 "main.obj" \
@@ -37,6 +41,7 @@ OBJS__QUOTED += \
 "system_msp432p401r.obj" 
 
 C_DEPS__QUOTED += \
+"ACC.d" \
 "BLE.d" \
 "GSR.d" \
 "main.d" \
@@ -44,6 +49,7 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
+"../ACC.c" \
 "../BLE.c" \
 "../GSR.c" \
 "../main.c" \
