@@ -9,10 +9,16 @@
 #include "GSR.h"
 #include "ROS.h"
 #include "ACC.h"
+#include "driverlib/MSP432P4xx/driverlib.h"
 
 volatile int16_t x = 0;
 volatile int16_t y = 0;
 volatile int16_t z = 0;
+<<<<<<< HEAD
+=======
+
+int beatAvg;
+>>>>>>> 26cca80502ec4e54d77f430ebe9ba1ccb61a1536
 
 void readheart_rate(){
 
@@ -38,6 +44,28 @@ void readGSR(){
 
 }
 
+void Clock_Init(){
+    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
+                GPIO_PIN3 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
+
+    /* Just in case the user wants to use the getACLK, getMCLK, etc. functions,
+     * let's set the clock frequency in the code.
+     */
+    CS_setExternalClockSourceFrequency(32000,48000000);
+
+    /* Starting HFXT in non-bypass mode without a timeout. Before we start
+     * we have to change VCORE to 1 to support the 48MHz frequency */
+    MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
+    MAP_FlashCtl_setWaitState(FLASH_BANK0, 1);
+    MAP_FlashCtl_setWaitState(FLASH_BANK1, 1);
+    CS_startHFXT(false);
+
+    /* Initializing MCLK to HFXT (effectively 48MHz) */
+    MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_8);
+    MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_8);
+}
+
 void main(void){
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
@@ -45,7 +73,7 @@ void main(void){
     // Initialize Sensors
     ACC_init();
     GSR_Init();
-    ROS_init();
+   // ROS_init();
 
     int time = 0;
 
@@ -89,7 +117,6 @@ void main(void){
             ACC_read_data();
             x = ACC_get_x();
             y = ACC_get_y();
-
             ACC_data = x << 16;
             ACC_data |= 0x0000FFFF & y;
             if(AP_GetNotifyCCCD(1)){
@@ -111,6 +138,9 @@ void main(void){
                 AP_SendNotification(3);
             }
         }
+
+
+
 
         time ++;
 

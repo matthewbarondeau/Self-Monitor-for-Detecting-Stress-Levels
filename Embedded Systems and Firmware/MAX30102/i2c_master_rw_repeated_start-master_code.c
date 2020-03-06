@@ -20,23 +20,46 @@
 const eUSCI_I2C_MasterConfig i2cConfig =
 {
         EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-        3000000,                                // SMCLK = 3MHz
+        6000000,                                // SMCLK = 3MHz
         EUSCI_B_I2C_SET_DATA_RATE_400KBPS,      // Desired I2C Clock of 100khz
         0,                                      // No byte counter threshold
         EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
 };
 
+void Clock_Init(){
+    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
+                GPIO_PIN3 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
+        MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
 
-int main(void)
-{
-    volatile uint32_t ii;
-    //Clock_Init48MHz();
-    /* Disabling the Watchdog  */
-    MAP_WDT_A_holdTimer();
+        /* Just in case the user wants to use the getACLK, getMCLK, etc. functions,
+         * let's set the clock frequency in the code.
+         */
+        CS_setExternalClockSourceFrequency(32000,48000000);
 
+        /* Starting HFXT in non-bypass mode without a timeout. Before we start
+         * we have to change VCORE to 1 to support the 48MHz frequency */
+        MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
+        MAP_FlashCtl_setWaitState(FLASH_BANK0, 1);
+        MAP_FlashCtl_setWaitState(FLASH_BANK1, 1);
+        CS_startHFXT(false);
+
+        /* Initializing MCLK to HFXT (effectively 48MHz) */
+        MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_4);
+        MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_4);
+}
+
+void ROS_Init(){
     /* Select Port 1 for I2C - Set Pin 6, 7 to input Primary Module Function,
      *   (UCB0SIMO/UCB0SDA, UCB0SOMI/UCB0SCL).
      */
+    uint32_t smclk = CS_getSMCLK();
+    uint32_t mclk = CS_getMCLK();
+    Clock_Init();
+    smclk = CS_getSMCLK();
+    mclk = CS_getMCLK();
+
+    UART0_Init();
+
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
             GPIO_PIN4 + GPIO_PIN5, GPIO_PRIMARY_MODULE_FUNCTION);
 
@@ -52,32 +75,29 @@ int main(void)
     MAP_I2C_enableModule(EUSCI_B1_BASE);
 
     MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
-
-    // Keeps 10ms Time incriments
-    // Timer32Init(30000);
-
-    UART0_Init();
-
+    
     // Check Connection
     uint8_t deviceid = readRegister8(0xFF);
     if(deviceid != 0x15){
         while(1){};
     }
 
-    MAX30102_Init();
+    MAX30102_init();
 
-    setPulseAmplitudeRed(0x0A);
-    deviceid = readRegister8(0xFF);
+}
+
+int main(void)
+{
+    ROS_Init();
 
     long irValue;
     while(1){
-        irValue = MAX30102_getIR();
-        MAX30102_nextSample();
+        MAX30102_check_device();
+        irValue = MAX30102_get_ir();
+        MAX30102_next_sample();
         UART0_OutString("IrValue: ");
         UART0_OutUDec(irValue);
         UART0_OutString("\n\r");
     }
 
 }
-
-    

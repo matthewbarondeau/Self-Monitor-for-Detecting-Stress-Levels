@@ -63,7 +63,6 @@ uint32_t Crystalstable = 0;             // loops before the crystal stabilizes (
 void Clock_Init48MHz(void){
   // wait for the PCMCTL0 and Clock System to be write-able by waiting for Power Control Manager to be idle
   while(PCM->CTL1&0x00000100){
-//  while(PCMCTL1&0x00000100){
     Prewait = Prewait + 1;
     if(Prewait >= 100000){
       return;                           // time out error
