@@ -35,17 +35,21 @@ void main(void){
 	AP_StartAdvertisement();
 	AP_GetStatus();
 
+	int time = 0;
 	while(1){
 	    // Bluetooth Background stuff
 	    AP_BackgroundProcess();
+	    if(time > 10000){
+	        // Read GSR
+	        GSR = GSR_Read_Data();
+	        // Send update to app
+	        if(AP_GetNotifyCCCD(0)){
+	            AP_SendNotification(0);
+	        }
+	        time = 0;
+	    }
 
-	    // Read GSR
-	    GSR = GSR_Read_Data();
-
-	    // Send update to app
-        if(AP_GetNotifyCCCD(0)){
-            AP_SendNotification(0);
-        }
+	    time ++;
 
 	}
 }

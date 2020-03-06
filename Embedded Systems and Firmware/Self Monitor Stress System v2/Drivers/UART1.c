@@ -112,7 +112,7 @@ void UART1_Init(void){
   EUSCI_A2->CTLW0 = 0x00C1;
                               // set the baud rate
                               // N = clock/baud rate = 12,000,000/115,200 = 104.1667
-  EUSCI_A2->BRW = 52;        // UCBR = baud rate = int(N) = 104
+  EUSCI_A2->BRW = 104;        // UCBR = baud rate = int(N) = 104
 
   EUSCI_A2->MCTLW = 0x0000;   // clear first and second modulation stage bit fields
 // since TxFifo is empty, we initially disarm interrupts on UCTXIFG, but arm it on OutChar
