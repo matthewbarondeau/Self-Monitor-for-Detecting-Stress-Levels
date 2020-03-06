@@ -17,9 +17,9 @@
 static int16_t x;
 static int16_t y;
 static int16_t z;
-static float xACC;
-static float yACC;
-static float zACC;
+static int16_t xACC;
+static int16_t yACC;
+static int16_t zACC;
 
 const eUSCI_I2C_MasterConfig ACCConfig =
 {
@@ -87,27 +87,31 @@ void ACC_init(void){
 
 // ACC_calc
 // Calculates acceleration in the given direction
-// TODO: should be reconfigured to return int16
-float ACC_calc(int16_t value){
-    float value_g = (float) value / 2048;
-    return 9.80665 * value_g;
+int16_t ACC_calc(int16_t value){
+    int32_t value_g = value * 980665 / 2048;
+    float value_g2 = (float) value / 2048;
+    value_g2 *= 9.80665;
+    return value_g / 1000;
+
+//    return 9.80665 * value_g;
 }
 
 // ACC_get_x
 // returns x acceleration value
-float ACC_get_x(void){
+// Fixed point precision of 0.01
+int16_t ACC_get_x(void){
     return xACC;
 }
 
 // ACC_get_y
 // returns y acceleration value
-float ACC_get_y(void){
+int16_t ACC_get_y(void){
     return yACC;
 }
 
 // ACC_get_z
 // returns z acceleration value
-float ACC_get_z(void){
+int16_t ACC_get_z(void){
     return zACC;
 }
 
@@ -154,4 +158,3 @@ void ACC_read_data(void){
 
     __delay_cycles(3000); // TODO: Test removal
 }
-

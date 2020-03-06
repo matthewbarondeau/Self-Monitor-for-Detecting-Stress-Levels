@@ -67,14 +67,14 @@ void ACC_read_data(void);
 
 // ACC_get_x
 // returns x acceleration value
-float ACC_get_x(void);
+int16_t ACC_get_x(void);
 
 // ACC_get_y
 // returns y acceleration value
-float ACC_get_y(void);
+int16_t ACC_get_y(void);
 
 // ACC_get_z
 // returns z acceleration value
-float ACC_get_z(void);
+int16_t ACC_get_z(void);
 
 #endif /* ACC_H_ */

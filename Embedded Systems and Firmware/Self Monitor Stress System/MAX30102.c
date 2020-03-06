@@ -321,6 +321,6 @@ uint16_t MAX30102_check_device(void){
     while(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0){
         int foo = I2C_slaveGetData(EUSCI_B1_BASE);
     }
-    __delay_cycles(10000);
+    __delay_cycles(3000);
     return 1;
 }

@@ -10,15 +10,15 @@
 #include "ROS.h"
 #include "ACC.h"
 
-volatile uint16_t x = 0;
-volatile uint16_t y = 0;
-volatile uint16_t z = 0;
+volatile int16_t x = 0;
+volatile int16_t y = 0;
+volatile int16_t z = 0;
 
 void readheart_rate(){
 
 }
 
-void readspo2(){
+void readIR(){
 
 }
 
@@ -42,9 +42,6 @@ void main(void){
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
 
-    // Initialize BLE
-    // BLE_init();
-
     // Initialize Sensors
     ACC_init();
     GSR_Init();
@@ -65,13 +62,13 @@ void main(void){
     uint32_t ACC_data = 0;
     AP_AddNotifyCharacteristic(0xFFF8, 4, &ACC_data, "ACC", &readACC);
 
-    uint8_t heart_rate = 0;
+    int16_t z = 0;
     // Add Notify Characteristics for Heart Rate
-    AP_AddNotifyCharacteristic(0xFFE8, 1, &heart_rate, "heart_rate", &readheart_rate);
+    AP_AddNotifyCharacteristic(0xFFE8, 2, &z, "z", &readZ);
 
     // Add Notify Characteristic for SpO2
-    uint8_t spo2 = 0;
-    AP_AddNotifyCharacteristic(0xFFEC, 1, &spo2, "spo2", &readspo2);
+    uint32_t ir = 0;
+    AP_AddNotifyCharacteristic(0xFFEC, 4, &ir, "ir", &readIR);
 
     // Start Broadcasting Bluetooth
     AP_RegisterService();
@@ -90,8 +87,8 @@ void main(void){
 
         if(time == 5000){
             ACC_read_data();
-            x = (int16_t) ACC_get_x();
-            y = (int16_t) ACC_get_y();
+            x = ACC_get_x();
+            y = ACC_get_y();
 
             ACC_data = x << 16;
             ACC_data |= 0x0000FFFF & y;
@@ -101,8 +98,7 @@ void main(void){
         }
 
         if(time == 7500){
-            ROS_calculate();
-            heart_rate = ROS_read_heart_rate();
+            ir = ROS_read_ir();
             if(AP_GetNotifyCCCD(2)){
                 AP_SendNotification(2);
             }
@@ -110,7 +106,7 @@ void main(void){
 
         if(time == 10000){
             time = 0;
-            spo2 = ROS_read_spo2();
+            z = ACC_get_z();
             if(AP_GetNotifyCCCD(3)){
                 AP_SendNotification(3);
             }
