@@ -14,11 +14,6 @@
 volatile int16_t x = 0;
 volatile int16_t y = 0;
 volatile int16_t z = 0;
-<<<<<<< HEAD
-=======
-
-int beatAvg;
->>>>>>> 26cca80502ec4e54d77f430ebe9ba1ccb61a1536
 
 void readheart_rate(){
 

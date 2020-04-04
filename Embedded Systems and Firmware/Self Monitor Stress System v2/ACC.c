@@ -62,6 +62,10 @@ void ACC_init(void){
         while(1);
     }
 
+    uint8_t oldval = I2C_readRegister2(I2C_MODULE, F_SETUP);
+    I2C_writeRegister2(I2C_MODULE, F_SETUP, 0x2);
+    uint8_t newval = I2C_readRegister2(I2C_MODULE, F_SETUP);
+
     I2C_writeRegister2(I2C_MODULE, MMA8451_REG_CTRL_REG2, 0x40); // reset
 
     __delay_cycles(48000);

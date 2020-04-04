@@ -75,38 +75,36 @@ uint8_t I2C_readRegister(uint32_t module, uint8_t reg){
 }
 
 void I2C_writeRegister2(uint32_t module, uint8_t reg, uint8_t value){
-    I2C_setMode(EUSCI_B2_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
     I2C_masterSendMultiByteStart(EUSCI_B2_BASE, reg);  // Start + 1Byte
     I2C_masterSendMultiByteNext(EUSCI_B2_BASE, value);
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
     I2C_masterSendMultiByteStop(EUSCI_B2_BASE);
-    __delay_cycles(48000);
-    while(EUSCI_B2->IFG & EUSCI_B_IFG_RXIFG0){
-        int foo = I2C_slaveGetData(EUSCI_B2_BASE);
-    }
-
 
 }
 
-uint8_t I2C_readRegister2(uint32_t module, uint8_t reg){
-    uint8_t RXData;
+uint8_t I2C_readRegister2(uint32_t moduleInstance, uint8_t reg){
+    // Send Start
+    // Send Device Address
+    // Send W
+    // Wait for ACK
+    // Send Register Address
+    // Wait for ACK
+    // Send Repeated Start
+    // Send Device Address
+    // Send Read
+    // Wait for ACK
+    // Receive Data
+    // Send Stop
 
     /* Send out EEPROM Mock Read Cmd (2 databytes) */
     I2C_masterSendMultiByteStart(EUSCI_B2_BASE, reg);  // Start + 1Byte
-    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_TXIFG0));
 
     // Send the restart condition, read one byte, send the stop condition right away
-    EUSCI_B2->CTLW0 &= ~(EUSCI_B_CTLW0_TR);
-    EUSCI_B2->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
+    I2C_masterReceiveStart(EUSCI_B2_BASE);
 
-    while(I2C_masterIsStartSent(EUSCI_B2_BASE));
+    I2C_masterSendMultiByteStop(EUSCI_B2_BASE);
 
-    EUSCI_B2->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
-
-    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_RXIFG0));
-    RXData = EUSCI_B2->RXBUF;
-
-    //__delay_cycles(48000);
-    return RXData;
+    return I2C_getByte(EUSCI_B2_BASE);
 
 }
 
@@ -176,7 +174,7 @@ void I2C_initMaster(uint32_t moduleInstance, const eUSCI_I2C_MasterConfig *confi
      */
     preScalarValue = (uint16_t) (config->i2cClk / config->dataRate);
 
-    EUSCI_B_CMSIS(moduleInstance)->BRW = 120;
+    EUSCI_B_CMSIS(moduleInstance)->BRW = preScalarValue;
 }
 
 void I2C_initSlave(uint32_t moduleInstance, uint_fast16_t slaveAddress,

@@ -12,6 +12,7 @@ C_SRCS += \
 ../Clock.c \
 ../Heartrate.c \
 ../MAX30102.c \
+../ROS.c \
 ../SpO2.c \
 ../Timer32.c \
 ../UART0.c \
@@ -23,6 +24,7 @@ C_DEPS += \
 ./Clock.d \
 ./Heartrate.d \
 ./MAX30102.d \
+./ROS.d \
 ./SpO2.d \
 ./Timer32.d \
 ./UART0.d \
@@ -34,6 +36,7 @@ OBJS += \
 ./Clock.obj \
 ./Heartrate.obj \
 ./MAX30102.obj \
+./ROS.obj \
 ./SpO2.obj \
 ./Timer32.obj \
 ./UART0.obj \
@@ -45,6 +48,7 @@ OBJS__QUOTED += \
 "Clock.obj" \
 "Heartrate.obj" \
 "MAX30102.obj" \
+"ROS.obj" \
 "SpO2.obj" \
 "Timer32.obj" \
 "UART0.obj" \
@@ -56,6 +60,7 @@ C_DEPS__QUOTED += \
 "Clock.d" \
 "Heartrate.d" \
 "MAX30102.d" \
+"ROS.d" \
 "SpO2.d" \
 "Timer32.d" \
 "UART0.d" \
@@ -67,6 +72,7 @@ C_SRCS__QUOTED += \
 "../Clock.c" \
 "../Heartrate.c" \
 "../MAX30102.c" \
+"../ROS.c" \
 "../SpO2.c" \
 "../Timer32.c" \
 "../UART0.c" \

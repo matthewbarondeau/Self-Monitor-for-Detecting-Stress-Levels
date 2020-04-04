@@ -14,4 +14,6 @@
 	<templateProperties value="id=i2c_master_rw_repeated_start-master_code.projectspec.i2c_master_rw_repeated_start-master_code"/>
 	<origin value="C:\Users\Matthew Barondeau\Downloads\msp432_driverlib_3_21_00_05\msp432_driverlib_3_21_00_05\examples\MSP432P4xx\i2c\i2c_master_rw_repeated_start-master_code\ccs\i2c_master_rw_repeated_start-master_code.projectspec"/>
 	<filesToOpen value="i2c_master_rw_repeated_start-master_code.c"/>
+	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
+	<isTargetManual value="false"/>
 </projectOptions>

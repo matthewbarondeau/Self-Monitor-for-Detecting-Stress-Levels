@@ -78,6 +78,9 @@
 #define SLOT_IR_LED     0x02
 #define SLOT_GREEN_LED  0x03
 
+/* Slave Address for I2C Slave */
+#define MAX30102_ADDRESS       0x57
+
 void setPulseAmplitudeRed(uint8_t amplitude);
 
 int MAX30102_init(void);

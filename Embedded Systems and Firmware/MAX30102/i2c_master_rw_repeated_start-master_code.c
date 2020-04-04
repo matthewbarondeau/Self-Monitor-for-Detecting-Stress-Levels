@@ -20,8 +20,8 @@
 const eUSCI_I2C_MasterConfig i2cConfig =
 {
         EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-        6000000,                                // SMCLK = 3MHz
-        EUSCI_B_I2C_SET_DATA_RATE_400KBPS,      // Desired I2C Clock of 100khz
+        3000000,                                // SMCLK = 3MHz
+        EUSCI_B_I2C_SET_DATA_RATE_100KBPS,      // Desired I2C Clock of 100khz
         0,                                      // No byte counter threshold
         EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
 };
@@ -54,7 +54,7 @@ void ROS_Init(){
      */
     uint32_t smclk = CS_getSMCLK();
     uint32_t mclk = CS_getMCLK();
-    Clock_Init();
+    //Clock_Init();
     smclk = CS_getSMCLK();
     mclk = CS_getMCLK();
 
@@ -76,12 +76,16 @@ void ROS_Init(){
 
     MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
     
-    // Check Connection
+    // Check Connection.
+
+
+
     uint8_t deviceid = readRegister8(0xFF);
     if(deviceid != 0x15){
         while(1){};
     }
 
+    while(1);
     MAX30102_init();
 
 }

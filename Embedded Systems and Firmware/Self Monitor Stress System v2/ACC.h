@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 
-#define MMA8451_DEFAULT_ADDRESS                 (0x1D)
+#define MMA8451_DEFAULT_ADDRESS                 (0x1C)
 
 #define MMA8451_REG_OUT_X_MSB     0x01
 #define MMA8451_REG_SYSMOD        0x0B
@@ -23,6 +23,7 @@
 #define MMA8451_REG_CTRL_REG2     0x2B
 #define MMA8451_REG_CTRL_REG4     0x2D
 #define MMA8451_REG_CTRL_REG5     0x2E
+#define F_SETUP 0x09
 
 #define MMA8451_PL_PUF            0
 #define MMA8451_PL_PUB            1

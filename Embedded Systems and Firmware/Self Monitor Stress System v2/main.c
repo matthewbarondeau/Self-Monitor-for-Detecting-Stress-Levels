@@ -16,7 +16,7 @@ void readBLE(){
 void main(void){
 	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
 
-    Clock_Init48MHz();
+    //Clock_Init48MHz();
 
     // Initialize GSR
     GSR_Init();
@@ -25,7 +25,7 @@ void main(void){
      ACC_init();
 
 
-
+/*
 
 	// Initialize CC2650
 	int r = AP_Init();
@@ -53,16 +53,16 @@ void main(void){
 	AP_StartAdvertisement();
 	AP_GetStatus();
 
-
+*/
 	int time = 0;
 	while(1){
 	    // Bluetooth Background stuff
-	    AP_BackgroundProcess();
+	    //AP_BackgroundProcess();
 
 	    if(time == 2000){
 	        ACC_read_data();
 	    }
-
+/*
 	    if(time == 4000){
 	        x = ACC_get_x();
 	        if(AP_GetNotifyCCCD(1)){
@@ -93,7 +93,7 @@ void main(void){
 	        }
 	        time = 0;
 	    }
-
+*/
 	    time ++;
 
 	}
