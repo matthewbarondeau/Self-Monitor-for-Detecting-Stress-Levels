@@ -4,6 +4,8 @@
 #include "heartRate.h"
 #include "Adafruit_MMA8451.h"
 #include "Adafruit_Sensor.h"
+#include "adc.h"
+
 
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 MAX30105 particleSensor;
@@ -23,6 +25,9 @@ int sensorValue = 0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+
+  ADC0_Ch6_Init();
+  /*
   Serial.println("Initializing MAX30102");
   if(!particleSensor.begin(Wire, I2C_SPEED_FAST)){
     Serial.println("MAX30102 Failed to Initialize");
@@ -39,14 +44,17 @@ void setup() {
   }
   mma.setRange(MMA8451_RANGE_2_G);
   Serial.println("MMA8451 Initialized");
+  */
 }
 
 void loop() {
 
   // Read GSR
-  sensorValue = analogRead(sensorPin);
+  //sensorValue = analogRead(sensorPin);
+  sensorValue = ADC_Ch6_Samples(10);
 
   // Calculate Heart Rate
+  /*
   long irValue = particleSensor.getIR();
   if(checkForBeat(irValue) == true){
     long delta = millis() - lastBeat;
@@ -109,5 +117,7 @@ void loop() {
       Serial.println("Landscape Left Back");
       break;
   }
+  */
+  Serial.println(sensorValue);
   
 }
