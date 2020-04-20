@@ -30,9 +30,6 @@ const eUSCI_I2C_MasterConfig ACCConfig =
     EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
 };
 
-void ACC_init_spi(void){
-
-}
 
 // ACC_init
 // Configure MMA8451 on I2C EUSCI_B1
