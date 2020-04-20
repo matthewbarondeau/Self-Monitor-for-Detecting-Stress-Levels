@@ -11,6 +11,7 @@ C_SRCS += \
 ../Drivers/CortexM.c \
 ../Drivers/GPIO.c \
 ../Drivers/LaunchPad.c \
+../Drivers/MAX30102.c \
 ../Drivers/Timer32.c \
 ../Drivers/UART0.c \
 ../Drivers/UART1.c \
@@ -22,6 +23,7 @@ C_DEPS += \
 ./Drivers/CortexM.d \
 ./Drivers/GPIO.d \
 ./Drivers/LaunchPad.d \
+./Drivers/MAX30102.d \
 ./Drivers/Timer32.d \
 ./Drivers/UART0.d \
 ./Drivers/UART1.d \
@@ -33,6 +35,7 @@ OBJS += \
 ./Drivers/CortexM.obj \
 ./Drivers/GPIO.obj \
 ./Drivers/LaunchPad.obj \
+./Drivers/MAX30102.obj \
 ./Drivers/Timer32.obj \
 ./Drivers/UART0.obj \
 ./Drivers/UART1.obj \
@@ -44,6 +47,7 @@ OBJS__QUOTED += \
 "Drivers\CortexM.obj" \
 "Drivers\GPIO.obj" \
 "Drivers\LaunchPad.obj" \
+"Drivers\MAX30102.obj" \
 "Drivers\Timer32.obj" \
 "Drivers\UART0.obj" \
 "Drivers\UART1.obj" \
@@ -55,6 +59,7 @@ C_DEPS__QUOTED += \
 "Drivers\CortexM.d" \
 "Drivers\GPIO.d" \
 "Drivers\LaunchPad.d" \
+"Drivers\MAX30102.d" \
 "Drivers\Timer32.d" \
 "Drivers\UART0.d" \
 "Drivers\UART1.d" \
@@ -66,6 +71,7 @@ C_SRCS__QUOTED += \
 "../Drivers/CortexM.c" \
 "../Drivers/GPIO.c" \
 "../Drivers/LaunchPad.c" \
+"../Drivers/MAX30102.c" \
 "../Drivers/Timer32.c" \
 "../Drivers/UART0.c" \
 "../Drivers/UART1.c" \

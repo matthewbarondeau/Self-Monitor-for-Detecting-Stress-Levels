@@ -4,6 +4,8 @@
 #include "GSR.h"
 #include "ACC.h"
 #include "Drivers/UART0.h"
+#include "ROS.h"
+#include "Drivers/Timer32.h"
 
 /**
  * main.c
@@ -18,6 +20,9 @@ void main(void){
 
     //Clock_Init48MHz();
 
+	// Initialize OS_Time
+	Timer32Init(3000);
+
 	// Initialize UART
 	UART0_Init();
 
@@ -27,8 +32,15 @@ void main(void){
     // Initialize ACC
     ACC_init();
 
+    // Initialize ROS
+    ROS_init();
+
 	while(1){
 	    ACC_read_data();
+	    UART0_OutUDec(ROS_read_heart_rate());
+	    UART0_OutChar(',');
+	    UART0_OutUDec(ROS_read_avg_heart_rate());
+	    UART0_OutChar(',');
 	    UART0_OutDec(ACC_get_x());
 	    UART0_OutChar(',');
 	    UART0_OutDec(ACC_get_y());
