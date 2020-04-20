@@ -77,42 +77,34 @@ uint8_t I2C_readRegister(uint32_t module, uint8_t reg){
 void I2C_writeRegister2(uint32_t module, uint8_t reg, uint8_t value){
     I2C_masterSendMultiByteStart(EUSCI_B2_BASE, reg);  // Start + 1Byte
     I2C_masterSendMultiByteNext(EUSCI_B2_BASE, value);
-    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_TXIFG0));
+    while(!(EUSCI_B1->IFG & EUSCI_B_IFG_TXIFG0));
     I2C_masterSendMultiByteStop(EUSCI_B2_BASE);
 
 }
 
 uint8_t I2C_readRegister2(uint32_t moduleInstance, uint8_t reg){
-    /* Send out EEPROM Mock Read Cmd (2 databytes) */
-    //I2C_masterSendMultiByteStart(EUSCI_B2_BASE, reg);  // Start + 1Byte
-
-    // Send the restart condition, read one byte, send the stop condition right away
-    //I2C_masterReceiveStart(EUSCI_B2_BASE);
-
-    //I2C_masterSendMultiByteStop(EUSCI_B2_BASE);
-
-    //return I2C_getByte(EUSCI_B2_BASE);
-
-    /* Making sure the last transaction has been completely sent out */
-    while (I2C_masterIsStopSent(EUSCI_B2_BASE));
+    // Send Start
+    // Send Device Address
+    // Send W
+    // Wait for ACK
+    // Send Register Address
+    // Wait for ACK
+    // Send Repeated Start
+    // Send Device Address
+    // Send Read
+    // Wait for ACK
+    // Receive Data
+    // Send Stop
 
     /* Send out EEPROM Mock Read Cmd (2 databytes) */
     I2C_masterSendMultiByteStart(EUSCI_B2_BASE, reg);  // Start + 1Byte
-    //MAP_I2C_masterSendMultiByteNext(EUSCI_B0_BASE, TXData[0]); // Poll for TXINT,Send 1Byte
-    /*---------------------------------------------*/
-    /* Now we need to initiate the read */
-    /* Wait until 2nd Byte has been output to shift register */
-    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_TXIFG0));
 
     // Send the restart condition, read one byte, send the stop condition right away
-    EUSCI_B2->CTLW0 &= ~(EUSCI_B_CTLW0_TR);
-    EUSCI_B2->CTLW0 |= EUSCI_B_CTLW0_TXSTT;
-    while(I2C_masterIsStartSent(EUSCI_B2_BASE));
-    EUSCI_B2->CTLW0 |= EUSCI_B_CTLW0_TXSTP;
-    while(!(EUSCI_B2->IFG & EUSCI_B_IFG_RXIFG0));
-    //RXData = EUSCI_B2->RXBUF;
+    I2C_masterReceiveStart(EUSCI_B2_BASE);
 
-    return EUSCI_B2->RXBUF;
+    I2C_masterSendMultiByteStop(EUSCI_B2_BASE);
+
+    return I2C_getByte(EUSCI_B2_BASE);
 
 }
 

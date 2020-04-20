@@ -19,7 +19,7 @@ void main(void){
     //Clock_Init48MHz();
 
     // Initialize GSR
-    GSR_Init();
+    //GSR_Init();
 
     // Initialize ACC
      ACC_init();

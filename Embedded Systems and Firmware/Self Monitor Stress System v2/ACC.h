@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 
-#define MMA8451_DEFAULT_ADDRESS                 (0x1C)
+#define MMA8451_DEFAULT_ADDRESS                 (0x1D)
 
 #define MMA8451_REG_OUT_X_MSB     0x01
 #define MMA8451_REG_SYSMOD        0x0B

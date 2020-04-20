@@ -54,7 +54,7 @@ void ACC_init(void){
     MAP_I2C_enableModule(I2C_MODULE);
 
     // Polling not interrupt
-    MAP_I2C_disableInterrupt(I2C_MODULE, 0xFFFF);
+    //MAP_I2C_disableInterrupt(I2C_MODULE, 0xFFFF);
 
     // Check Connection
     uint8_t deviceid = I2C_readRegister2(I2C_MODULE, MMA8451_REG_WHOAMI);
