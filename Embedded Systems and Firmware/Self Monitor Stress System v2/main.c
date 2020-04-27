@@ -48,7 +48,7 @@ void main(void){
 	    int16_t x = ACC_get_x();
 	    int16_t y = ACC_get_y();
 	    int16_t z = ACC_get_z();
-	    int switch1 = Switches_Read(0x2);
+	    int switch1 = Switches_SW1_Pressed();
 	    //if(getOS_MsTime() - lastprint > 100){
 	        //UART0_OutUDec(heart_rate);
 	        //UART0_OutChar(',');
@@ -66,7 +66,6 @@ void main(void){
 	        UART0_OutString("\n\r");
 	    //    lastprint = getOS_MsTime();
 	    //}
-
 
 	}
 }

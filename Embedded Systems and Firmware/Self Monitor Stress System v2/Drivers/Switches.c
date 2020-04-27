@@ -25,3 +25,15 @@ uint8_t Switches_Read(uint8_t mask){
     switches &= mask;
     return switches;
 }
+
+// Reads P1.1
+// Shifts P1.1 to LSB
+// Converts Negative Logic Switch to Positive Logic
+// Returns 1 if pressed, 0 if not pressed
+uint8_t Switches_SW1_Pressed(void){
+    uint8_t SW1 = Switches_Read(0x2);
+    SW1 = SW1 >> 1;
+    SW1 = ~SW1;
+    SW1 &= 0x1;
+    return SW1;
+}

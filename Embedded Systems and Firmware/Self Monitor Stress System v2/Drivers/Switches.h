@@ -19,4 +19,9 @@ void Switches_Init(void);
 // For both switches, mas = 0x12
 uint8_t Switches_Read(uint8_t mask);
 
+// Reads P1.1
+// Shifts P1.1 to LSB
+// Converts Negative Logic Switch to Positive Logic
+// Returns 1 if pressed, 0 if not pressed
+uint8_t Switches_SW1_Pressed(void);
 #endif /* SWITCHES_H_ */
