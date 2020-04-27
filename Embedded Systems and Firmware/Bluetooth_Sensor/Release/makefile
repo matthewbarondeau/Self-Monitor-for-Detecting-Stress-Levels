@@ -4,17 +4,16 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS
+CG_TOOL_ROOT := C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./adc.obj" \
 "./main.obj" \
 "./startup_msp432p401r_ccs.obj" \
 "./system_msp432p401r.obj" \
-"./Drivers/AP.obj" \
-"./Drivers/Clock.obj" \
 "./Drivers/CortexM.obj" \
 "./Drivers/GPIO.obj" \
 "./Drivers/LaunchPad.obj" \
@@ -151,22 +150,22 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 Bluetooth_Sensor.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: MSP432 Linker'
-	"C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O2 --advice:power=all --define=__MSP432P401R__ --define=TARGET_IS_MSP432P4XX --define=ccs --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Bluetooth_Sensor.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccs910/ccs/ccs_base/arm/include" -i"C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/lib" -i"C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Bluetooth_Sensor_linkInfo.xml" --rom_model -o "Bluetooth_Sensor.out" $(ORDERED_OBJS)
+	"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O2 --advice:power=all --define=__MSP432P401R__ --define=TARGET_IS_MSP432P4XX --define=ccs --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Bluetooth_Sensor.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccs930/ccs/ccs_base/arm/include" -i"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/lib" -i"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Bluetooth_Sensor_linkInfo.xml" --rom_model -o "Bluetooth_Sensor.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 Bluetooth_Sensor.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: MSP432 Hex Utility'
-	"C:/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.2.LTS/bin/armhex" --memwidth=8 --romwidth=8 -o "Bluetooth_Sensor.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccs930/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armhex" --memwidth=8 --romwidth=8 -o "Bluetooth_Sensor.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "Drivers\AP.obj" "Drivers\Clock.obj" "Drivers\CortexM.obj" "Drivers\GPIO.obj" "Drivers\LaunchPad.obj" "Drivers\UART0.obj" "Drivers\UART1.obj" 
-	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "Drivers\AP.d" "Drivers\Clock.d" "Drivers\CortexM.d" "Drivers\GPIO.d" "Drivers\LaunchPad.d" "Drivers\UART0.d" "Drivers\UART1.d" 
+	-$(RM) "adc.obj" "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "Drivers\CortexM.obj" "Drivers\GPIO.obj" "Drivers\LaunchPad.obj" "Drivers\UART0.obj" "Drivers\UART1.obj" 
+	-$(RM) "adc.d" "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "Drivers\CortexM.d" "Drivers\GPIO.d" "Drivers\LaunchPad.d" "Drivers\UART0.d" "Drivers\UART1.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

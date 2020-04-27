@@ -57,7 +57,7 @@ extern "C"
 #endif
 
 #include <stdint.h>
-#include "msp.h"
+#include <msp.h>
 #include <stdbool.h>
 
 //*****************************************************************************

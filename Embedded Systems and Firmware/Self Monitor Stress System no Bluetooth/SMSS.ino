@@ -2,12 +2,10 @@
 #include <Wire.h>
 #include "MAX30105.h"
 #include "heartRate.h"
-#include "Adafruit_MMA8451.h"
-#include "Adafruit_Sensor.h"
 #include "adc.h"
+#include "ACC.h"
 
-
-Adafruit_MMA8451 mma = Adafruit_MMA8451();
+//Adafruit_MMA8451 mma = Adafruit_MMA8451();
 MAX30105 particleSensor;
 
 // Variables for Heartrate
@@ -37,14 +35,10 @@ void setup() {
   particleSensor.setPulseAmplitudeRed(0x0A);
   particleSensor.setPulseAmplitudeGreen(0);
   Serial.println("MAX30102 Initialized");
-
-  Serial.println("Initializing MMA8451");
-  if(!mma.begin()){
-    Serial.println("MMA8451 not found");
-  }
-  mma.setRange(MMA8451_RANGE_2_G);
-  Serial.println("MMA8451 Initialized");
   */
+
+  ACC_init();
+
 }
 
 void loop() {
@@ -72,7 +66,13 @@ void loop() {
       beatAvg /= RATE_SIZE;
     }
   }
+   */
+  ACC_read_data();
+  Serial.print(ACC_get_x());
+  Serial.print(ACC_get_y());
+  Serial.print(ACC_get_z());
 
+  /*
   // Calculate Position
   mma.read();
   sensors_event_t event;
