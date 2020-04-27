@@ -37,3 +37,18 @@ uint8_t Switches_SW1_Pressed(void){
     SW1 &= 0x1;
     return SW1;
 }
+
+uint8_t Switches_SW1_Toggle(void){
+    static uint8_t OLD_SW1 =0;
+    uint8_t SW1 = Switches_SW1_Pressed();
+    if(SW1 == 1 && OLD_SW1 == 0){
+        OLD_SW1 = 1;
+        for(int k = 0; k < 40000; k++); //Debounce
+        return 1;
+    } else if(SW1 == 1 && OLD_SW1 == 1){
+        OLD_SW1 = 0;
+        for(int k = 0; k < 40000; k++); //Debounce
+        return 0;
+    }
+    return OLD_SW1;
+}
