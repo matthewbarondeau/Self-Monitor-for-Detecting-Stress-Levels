@@ -16,8 +16,8 @@
 #define I2C_MODULE EUSCI_B1_BASE
 
 // Allocate variables
-const int8_t RATE_SIZE = 4;
-uint8_t rates[4];
+const int8_t RATE_SIZE = 8;
+uint8_t rates[8];
 uint8_t rateSpot = 0;
 long lastBeat = 0;
 float beatsPerMinute;
@@ -96,7 +96,7 @@ uint8_t ROS_read_heart_rate(){
       long delta = getOS_MsTime() - lastBeat;
       lastBeat = getOS_MsTime();
       beatsPerMinute = 60 / (delta / 1000.0);
-      if(beatsPerMinute < 255 && beatsPerMinute > 20){
+      if(beatsPerMinute < 140 && beatsPerMinute > 40){
         rates[rateSpot++] = (uint8_t)beatsPerMinute;
         rateSpot %= RATE_SIZE;
         beatAvg = 0;
