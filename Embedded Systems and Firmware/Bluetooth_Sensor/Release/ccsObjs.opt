@@ -1,1 +1,0 @@
-"./main.obj" "./startup_msp432p401r_ccs.obj" "./system_msp432p401r.obj" "./Drivers/AP.obj" "./Drivers/Clock.obj" "./Drivers/CortexM.obj" "./Drivers/GPIO.obj" "./Drivers/LaunchPad.obj" "./Drivers/UART0.obj" "./Drivers/UART1.obj" "../msp432p401r.cmd" -llibc.a 
