@@ -68,15 +68,15 @@ policies, either expressed or implied, of the FreeBSD Project.
 // see GPIO.c file for hardware connections 
 
 #include <stdint.h>
-#include "CortexM.h"
-#include "UART0.h"
-#include "UART1.h"
-#include "AP.h"
-#include "Clock.h"
+#include "Drivers/CortexM.h"
+#include "Drivers/UART0.h"
+#include "Drivers/UART1.h"
+#include "Drivers/AP.h"
+#include "Drivers/Clock.h"
 #include "msp.h"
-#include "GPIO.h"
+#include "Drivers/GPIO.h"
 
-static int i;
+int i;
 
 
 #define RECVSIZE 128
@@ -384,7 +384,7 @@ int AP_SendMessage(uint8_t *pt){
   data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++;   // MSB length
   data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++;   // CMD0
   data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++;   // CMD1
-  for( i=0;i<size;i++){
+  for(i=0;i<size;i++){
     data=*pt; UART1_OutChar(data); fcs=fcs^data; pt++; // payload
   }
   UART1_OutChar(fcs);                                  // FCS
@@ -652,21 +652,27 @@ int AP_AddNotifyCharacteristic(uint16_t uuid, uint16_t thesize, void *pt,
   char name[], void(*CCCDfunc)(void)){
   int r; uint16_t handle; int i;
   if(thesize>8) return APFAIL;
+
   if(NotifyCharacteristicCount>=NOTIFYMAXCHARACTERISTICS) return APFAIL; // error
+
   NPI_AddCharValue[3] = 0x35;   // SNP Add Characteristic Value Declaration
   NPI_AddCharValue[4] = 0x82;  
   NPI_AddCharValue[5] = 0x00;   // GATT no read, no Write GATT Permission
   NPI_AddCharValue[6] = 0x10;   // 0x10=notify, GATT Properties
   NPI_AddCharValue[11] = 0xFF&uuid; NPI_AddCharValue[12] = uuid>>8;
   OutString("\n\rAdd Notify CharValue");
+
   r=AP_SendMessageResponse((uint8_t*)NPI_AddCharValue,RecvBuf,RECVSIZE);
+
   if(r == APFAIL) return APFAIL;
   handle = (RecvBuf[7]<<8)+RecvBuf[6]; // handle for this characteristic
   OutString("\n\rAdd CharDescriptor");
   i=0;
+
   while((i<19)&&(name[i])){
     NPI_AddCharDescriptor[12+i] = name[i]; i++;
   }
+
   if(i==0) return APFAIL;               // empty name
   NPI_AddCharDescriptor[12+i] = 0; i++; // add null termination
   NPI_AddCharDescriptor[1] = 7+i;       // frame length
@@ -678,11 +684,12 @@ int AP_AddNotifyCharacteristic(uint16_t uuid, uint16_t thesize, void *pt,
   NPI_AddCharDescriptor[8] = NPI_AddCharDescriptor[10] = i; // string length
   NPI_AddCharDescriptor[9] = NPI_AddCharDescriptor[11] = 0; // string length
   r=AP_SendMessageResponse((uint8_t*)NPI_AddCharDescriptor,RecvBuf,RECVSIZE);
+
   if(r == APFAIL) return APFAIL;
   NotifyCharacteristicList[NotifyCharacteristicCount].uuid = uuid;
   NotifyCharacteristicList[NotifyCharacteristicCount].theHandle = handle;
   NotifyCharacteristicList[NotifyCharacteristicCount].CCCDhandle = (RecvBuf[8]<<8)+RecvBuf[7]; // handle for this CCCD
-  NotifyCharacteristicList[NotifyCharacteristicCount].CCCDvalue = 0; // notify initially off
+  NotifyCharacteristicList[NotifyCharacteristicCount].CCCDvalue = 1; // notify initially off
   NotifyCharacteristicList[NotifyCharacteristicCount].size = thesize;
   NotifyCharacteristicList[NotifyCharacteristicCount].pt = (uint8_t *) pt;
   NotifyCharacteristicList[NotifyCharacteristicCount].callBackCCCD = CCCDfunc;
@@ -727,8 +734,8 @@ int AP_StartAdvertisement(void){volatile int r;
   r =AP_SendMessageResponse((uint8_t*)NPI_GATTSetDeviceName,RecvBuf,RECVSIZE);
   OutString("\n\rSetAdvertisement1");
   r =AP_SendMessageResponse((uint8_t*)NPI_SetAdvertisement1,RecvBuf,RECVSIZE);
-//  OutString("\n\rSetAdvertisementSAP");
-//  r =AP_SendMessageResponse((uint8_t*)NPI_SetAdvertisementSAP,RecvBuf,RECVSIZE);
+  OutString("\n\rSetAdvertisementSAP");
+  r =AP_SendMessageResponse((uint8_t*)NPI_SetAdvertisementSAP,RecvBuf,RECVSIZE);
   OutString("\n\rSetAdvertisement Data");
   r =AP_SendMessageResponse((uint8_t*)NPI_SetAdvertisementData,RecvBuf,RECVSIZE);
   OutString("\n\rStartAdvertisement");

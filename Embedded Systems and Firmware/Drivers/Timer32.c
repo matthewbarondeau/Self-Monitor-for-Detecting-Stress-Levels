@@ -7,6 +7,8 @@
 
 #include "msp.h"
 
+uint64_t OS_MsTime;
+
 // Initialize 32-bit timer
 void Timer32Init(int period){
     // Timer32 set up in periodic mode, 32-bit, no pre-scale
@@ -22,7 +24,8 @@ void Timer32Init(int period){
     TIMER32_1->CONTROL |= TIMER32_CONTROL_ENABLE | TIMER32_CONTROL_IE;
 
     // Enable sleep on exit from ISR
-    SCB->SCR |= SCB_SCR_SLEEPONEXIT_Msk;
+    //SCB->SCR |= SCB_SCR_SLEEPONEXIT_Msk;
+    OS_MsTime = 0;
 }
 
 // Disables 32-bit timer
@@ -30,11 +33,14 @@ void Timer32Stop(void){
     TIMER32_1->CONTROL &= ~(TIMER32_CONTROL_ENABLE | TIMER32_CONTROL_IE);
 }
 
-/*
+
 // 32-bit timer interrupt handler
 void T32_INT1_IRQHandler(void){
+    OS_MsTime+= 1;
     TIMER32_1->INTCLR |= BIT0;              // Clear Timer32 interrupt flag
 
 }
 
-*/
+uint64_t getOS_MsTime(void){
+    return OS_MsTime;
+}

@@ -168,6 +168,7 @@ uint32_t UART0_InUDec(void);
  */
 void UART0_OutUDec(uint32_t n);
 
+void UART0_OutDec(int16_t n);
 
 /**
  * @details   Receive an unsigned number from EUSCI_A0 UART

@@ -1,10 +1,9 @@
 /*
  * adc.c
  *
- *  Created on: Oct 16, 2019
+ *  Created on: Jan 29, 2020
  *      Author: Matthew Barondeau
  */
-
 
 #include <stdio.h>
 #include <stdint.h>
@@ -36,8 +35,8 @@ uint32_t ADC_Ch6_In(void){
 // Software averaging
 uint32_t ADC_Ch6_Samples(int numSamples){
     uint32_t samples = 0;
-
-    for(int i = 0; i< numSamples; i++){
+    int i;
+    for(i = 0; i< numSamples; i++){
         samples += ADC_Ch6_In();
     }
 

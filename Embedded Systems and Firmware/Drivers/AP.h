@@ -20,6 +20,7 @@
  * @date      February 18, 2017
 
  ******************************************************************************/
+#include <stdint.h>
 
 /* This example accompanies the books
    "Embedded Systems: Introduction to the MSP432 Microcontroller",
