@@ -65,7 +65,7 @@ void ACC_init(void){
 
     I2C_writeRegister2(I2C_MODULE, MMA8451_REG_CTRL_REG2, 0x40); // reset
 
-    __delay_cycles(48000);
+    __delay_cycles(48000); // @suppress("Function cannot be resolved")
 
     while (I2C_readRegister2(I2C_MODULE, MMA8451_REG_CTRL_REG2) & 0x40);
 
@@ -153,7 +153,7 @@ void ACC_read_data(void){
     z = z >> 2;
 
     // Delay 1ms need to test removal
-    __delay_cycles(3000);
+    __delay_cycles(3000); // @suppress("Function cannot be resolved")
 
     int q = I2C_slaveGetData(I2C_MODULE); // TODO: Test removal
 
@@ -161,5 +161,5 @@ void ACC_read_data(void){
     yACC = ACC_calc(y);
     zACC = ACC_calc(z);
 
-    __delay_cycles(3000); // TODO: Test removal
+    __delay_cycles(3000); // TODO: Test removal // @suppress("Function cannot be resolved")
 }
