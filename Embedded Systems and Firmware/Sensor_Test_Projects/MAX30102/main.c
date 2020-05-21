@@ -26,40 +26,11 @@ const eUSCI_I2C_MasterConfig i2cConfig =
         EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
 };
 
-void Clock_Init(){
-    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
-                GPIO_PIN3 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
-        MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
-
-        /* Just in case the user wants to use the getACLK, getMCLK, etc. functions,
-         * let's set the clock frequency in the code.
-         */
-        CS_setExternalClockSourceFrequency(32000,48000000);
-
-        /* Starting HFXT in non-bypass mode without a timeout. Before we start
-         * we have to change VCORE to 1 to support the 48MHz frequency */
-        MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
-        MAP_FlashCtl_setWaitState(FLASH_BANK0, 1);
-        MAP_FlashCtl_setWaitState(FLASH_BANK1, 1);
-        CS_startHFXT(false);
-
-        /* Initializing MCLK to HFXT (effectively 48MHz) */
-        MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_4);
-        MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_4);
-}
 
 void ROS_Init(){
     /* Select Port 1 for I2C - Set Pin 6, 7 to input Primary Module Function,
      *   (UCB0SIMO/UCB0SDA, UCB0SOMI/UCB0SCL).
      */
-    uint32_t smclk = CS_getSMCLK();
-    uint32_t mclk = CS_getMCLK();
-    //Clock_Init();
-    smclk = CS_getSMCLK();
-    mclk = CS_getMCLK();
-
-    UART0_Init();
-
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
             GPIO_PIN4 + GPIO_PIN5, GPIO_PRIMARY_MODULE_FUNCTION);
 
@@ -77,21 +48,19 @@ void ROS_Init(){
     MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
     
     // Check Connection.
-
-
-
     uint8_t deviceid = readRegister8(0xFF);
     if(deviceid != 0x15){
         while(1){};
     }
 
-    while(1);
     MAX30102_init();
 
 }
 
 int main(void)
 {
+    UART0_Init();
+
     ROS_Init();
 
     long irValue;

@@ -55,7 +55,7 @@ void ROS_init(){
     MAP_I2C_disableInterrupt(EUSCI_B1_BASE, 0xFFFF);
 
     // Check Connection
-    uint8_t deviceid = I2C_readRegister(1, 0xFF);
+    uint8_t deviceid = readRegister8(0xFF);
     if(deviceid != 0x15){
         while(1){};
     }

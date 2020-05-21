@@ -24,7 +24,7 @@ void softReset(void){
     {
       uint8_t response = readRegister8(MAX30105_MODECONFIG);
       if ((response & MAX30105_RESET) == 0) break; //We're done!
-      __delay_cycles(48000); //Let's not over burden the I2C bus
+      __delay_cycles(48000); //Let's not over burden the I2C bus // @suppress("Function cannot be resolved")
       startTime++;
     }
 }
@@ -289,7 +289,7 @@ uint16_t MAX30102_check_device(void){
     while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
     temp[0] = I2C_slaveGetData(EUSCI_B1_BASE);
 
-    memcpy(&tempLong, temp, sizeof(tempLong));
+    memcpy(&tempLong, temp, sizeof(tempLong)); // @suppress("Invalid arguments")
 
     tempLong &= 0x3FFFF;
 
@@ -305,7 +305,7 @@ uint16_t MAX30102_check_device(void){
         while(!(EUSCI_B1->IFG & EUSCI_B_IFG_RXIFG0));
         temp[0] = I2C_slaveGetData(EUSCI_B1_BASE);
 
-        memcpy(&tempLong, temp, sizeof(tempLong));
+        memcpy(&tempLong, temp, sizeof(tempLong)); // @suppress("Invalid arguments")
 
         tempLong &= 0x3FFFF;
 
