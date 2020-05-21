@@ -1,3 +1,7 @@
+// main.c
+// Author: Matthew Barondeau
+// Modified 5/21/2020
+
 #include "msp.h"
 #include "Drivers/Clock.h"
 #include "Drivers/Edge_Interrupts_Port1.h"
@@ -6,10 +10,9 @@
 #include "Drivers/SysTick.h"
 #include "Drivers/CortexM.h"
 #include "Drivers/AP.h"
-#include "Drivers/Timer32.h"
 
+// Comment out to remove UART0 Printouts
 #define DEBUG
-#define BLUETOOTH
 
 #define Cycles_Per_Second 48000000
 #define Cycles_Per_Systick 16777216
@@ -23,36 +26,39 @@ volatile int Experimental_HeartBeat = 0;
 volatile int Timer_Interval = 0;
 int Heartbeat;
 
-uint8_t LEDs;
-
 void readHeartbeat(void){
     // Print out Heartbeat information to UART0
-    #ifdef DEBUG
-    UART0_OutString("Bluetooth called\n\r");
     UART0_OutString("Heartrate: ");
     UART0_OutUDec(Experimental_HeartBeat);
     UART0_OutString("\n\r");
-    #endif
 
-    // Copy volatile into to Variable that bluetooth tracks
-    Heartbeat = Experimental_HeartBeat;
 }
 
+// Calculates the time difference between two button presses
+// Uses that time difference to implement heartbeat
+// Sends heartbeat via bluetooth
 
 void main(void){
+    // Initialize Clock to 48Mhz
 	Clock_Init48MHz();
-    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
+
+	// Disable Watchdog Timer
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;
+
+    // Initialize LEDs and Switches
     LaunchPad_Init();
+
+    // Enable Edge Triggered Interrupts
     Edge_Trigger_Port1_Init(0x56);
 
+    #ifdef DEBUG
     // Initialize UART0
     UART0_Init();
+    #endif
 
     // Initialize SysTick then turn it off
     SysTick_Init(0xFFFFFF);
     SysTick_Stop();
-
-    #ifdef BLUETOOTH
 
     // Initialize CC2650 Bluetooth
     EnableInterrupts();
@@ -61,34 +67,24 @@ void main(void){
     AP_GetVersion();
     AP_AddService(0x00FF);
 
-    // Add Heartbeat read characteristic
-    /*
-    AP_AddCharacteristic(
-        0xFFF1,                     // Unique ID Number
-        4,                          // Number of bytes to send
-        &Heartbeat,                 // Pointer to the user data
-        0x01,                       // Permission: 0=none, 1=Read, 2=Write, 3=Read+Write
-        0x02,                       // Properties: 2=Read, 8=Write, 0xA=Read+Write
-        "Heartbeat",                // Null-terminated string up to 20 bytes
-        &readHeartbeat,             // Read function called
-        0                           // Write function called
-    );
-    */
-
     // Finish configuring Bluetooth and start advertising
     AP_AddNotifyCharacteristic(0xFFF1, 1, &Heartbeat, "Heartbeat", &readHeartbeat);
 
     AP_RegisterService();
     AP_StartAdvertisement();
-    AP_GetStatus(); // optional
+    AP_GetStatus();
 
     int time = 0;
-    #endif
 
     while(1){
+
+        // Handle background SNP frames
         AP_BackgroundProcess();
+
+        // Used to not overload bluetooth
         time++;
 
+        // Send Experimental HeartBeat
         if(time > 2000000){
             time = 0;
             Heartbeat = Experimental_HeartBeat;
@@ -97,6 +93,7 @@ void main(void){
             }
 
         }
+
 
         if(Edge_Triggered_Capture){
             // Acknowledge Completion of Heartbeat
