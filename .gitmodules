@@ -1,0 +1,6 @@
+[submodule "Application"]
+	path = Application
+	url = https://github.com/mattqd97/PowerPorterIOS
+[submodule "PowerPorterIOS"]
+	path = PowerPorterIOS
+	url = https://github.com/mattqd97/PowerPorterIOS
