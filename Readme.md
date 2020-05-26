@@ -45,6 +45,9 @@ In order to place all components in a convenient position and ensure minimal int
 ### Embedded System
 Our embedded system team developed all the driver interfaces for the sensors to the MSP432P401R and performed integration testing with the application. The MAX30101 ROS and MMA8451 Accelerometer both communicated using an I2C interface while the Grove GSR sensor sent an analog voltage reading to the MSP432.
 
+<p align="center">
+  <img src="/Images/EmbeddedDiagram.png"
+</p>
 
 ### Application
-The mobile application and machine learning model were developed in a different repository found here:
+The mobile application and machine learning model were developed in a different repository and linked as a submodule under PowerPorterIOS. It may also be found here: https://github.com/mattqd97/PowerPorterIOS
