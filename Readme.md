@@ -36,14 +36,14 @@ To develop our system, our team designed a Printed Circuit Board and placed all 
 </p>
 
 #### Packaging
-In order to place all components in a convenient position and ensure minimal intrusivness to the user, our team design a package for our system. This package consists of glove with the GSR sensor sewn into the lining. A 3D printed enclosure was designed for our PCB and placed at the wrist. The glove and PCB placement are shown below.
+In order to place all components in a convenient position and ensure minimal intrusiveness to the user, our team design a package for our system. This package consists of glove with the GSR sensor sewn into the lining. A 3D printed enclosure was designed for our PCB and placed at the wrist. The glove and PCB placement are shown below.
 
 <p align="center">
   <img src="/Images/Glove.png"
 </p>
 
 ### Embedded System
-Our embedded system team developed all the driver interfaces for the sensors to the MSP432P401R and performed integration testing with the application. The MAX30101 ROS and MMA8451 Accelerometer both communicated using an I2C interface while the Grove GSR sensor sent an analog voltage reading to the MSP432.
+Our embedded system team developed all the driver interfaces for the sensors to the MSP432P401R and performed integration testing with the application. The MAX30102 ROS and MMA8451 Accelerometer both communicated using an I2C interface while the Grove GSR sensor sent an analog voltage reading to the MSP432. All software for the embedded system were developed using TI Code Composer Studio. More information about the driver interfaces can be found within the Embedded Systems and Firmware directory.
 
 <p align="center">
   <img src="/Images/EmbeddedDiagram.png"
