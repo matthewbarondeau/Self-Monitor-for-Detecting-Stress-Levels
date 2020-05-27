@@ -3,7 +3,10 @@
 ## Overview
 This repository contains all the code written for the embedded system portion of our senior design project. The specific sub directories are listed below.
 
-TODO
+<p align="center">
+  <img src="../Images/EmbeddedDiagram.png"
+</p>
+  
 Attached is an image of our final embedded system in block diagram form. There are 2 I2C peripherals and 1 ADC peripheral to our system. All hardware components can be found in the Hardware directory.
 
 ## Subdirectories
