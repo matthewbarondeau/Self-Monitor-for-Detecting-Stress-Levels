@@ -42,6 +42,13 @@ In order to place all components in a convenient position and ensure minimal int
   <img src="/Images/Glove.png"
 </p>
 
+In addition to the gloves, our team designed a 3D printed enclosure to contain the PCB and various electronic components. This is to prevent interference from the user as well as preventing any potential shorts due to contact with the human body. A rendering of the box is shown below, and the stl files can be found in the hardware repository.
+
+<p align="center">
+  <img src="/Images/Enclosure.png"
+</p>
+
+
 ### Embedded System
 Our embedded system team developed all the driver interfaces for the sensors to the MSP432P401R and performed integration testing with the application. The MAX30102 ROS and MMA8451 Accelerometer both communicated using an I2C interface while the Grove GSR sensor sent an analog voltage reading to the MSP432. All software for the embedded system were developed using TI Code Composer Studio. More information about the driver interfaces can be found within the Embedded Systems and Firmware directory.
 
