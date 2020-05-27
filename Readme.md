@@ -58,3 +58,6 @@ Our embedded system team developed all the driver interfaces for the sensors to 
 
 ### Application
 The mobile application and machine learning model were developed in a different repository and linked as a submodule under PowerPorterIOS. It may also be found here: https://github.com/mattqd97/PowerPorterIOS
+
+###  Documentation
+Our final report and oral presentation slides are included in the documentation directory. The report dives into full detail on the operation of our device, future work, and the machine learning model. The report is a high level overview presented at the end of our project.
